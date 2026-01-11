@@ -343,7 +343,7 @@ const ApplicationSubmission: React.FC<ApplicationSubmissionProps> = ({
       } else {
         // Fallback: redirect to offer page without webtoken (will show error or loading)
         console.warn('⚠️ No redirect URL in response, redirecting to default offer page');
-        navigate('/offerpage');
+      navigate('/offerpage');
       }
     } catch (error) {
       console.error('Error during application submission:', error);
