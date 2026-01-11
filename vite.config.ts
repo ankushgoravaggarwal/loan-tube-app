@@ -57,6 +57,10 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Allow external access
     port: 5173,
+    allowedHosts: [
+      'offers.loantube.com',
+      '.loantube.com' // Allow all subdomains of loantube.com
+    ],
     hmr: {
       overlay: false
     }
