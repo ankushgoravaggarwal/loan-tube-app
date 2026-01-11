@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/loantube.svg" />
+    
+    
+    <link rel="preload" href="/assets/fonts/montserrat-400.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/montserrat-500.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/montserrat-600.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/fonts/montserrat-700.woff2" as="font" type="font/woff2" crossorigin>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>LoanTube White Label</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    
+
+    <script>
+      let gtmLoaded = false;
+      let userEngaged = false;
+      let engagementScore = 0;
+      const isInternalOfferPage = window.location.pathname.startsWith('/offerpage');
+      
+      function loadGTM() {
+        if (gtmLoaded) return;
+        gtmLoaded = true;
+        
+        // Add preconnections only when we're about to load GTM
+        const preconnect1 = document.createElement('link');
+        preconnect1.rel = 'preconnect';
+        preconnect1.href = 'https://www.googletagmanager.com';
+        document.head.appendChild(preconnect1);
+        
+        const preconnect2 = document.createElement('link');
+        preconnect2.rel = 'preconnect';
+        preconnect2.href = 'https://www.gstatic.com';
+        document.head.appendChild(preconnect2);
+        
+        // Small delay to let preconnections establish
+        setTimeout(() => {
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-586VDG4');
+        }, 100);
+      }
+      
+      function checkUserEngagement() {
+        engagementScore++;
+        
+        // Only load after meaningful engagement
+        if (engagementScore >= 3 && !userEngaged) {
+          userEngaged = true;
+          loadGTM();
+        }
+      }
+      
+      if (isInternalOfferPage) {
+        // For internal offer page, load GTM immediately and skip delay logic
+        loadGTM();
+      } else {
+        // Track only meaningful interactions
+        const meaningfulEvents = ['click', 'submit', 'change', 'focus', 'keydown'];
+        meaningfulEvents.forEach(event => {
+          document.addEventListener(event, checkUserEngagement, { 
+            once: false, 
+            passive: true 
+          });
+        });
+        
+        // Intersection Observer for significant scrolling
+        let scrollEngagement = 0;
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              scrollEngagement++;
+              if (scrollEngagement >= 3) { // User scrolled through 3+ sections
+                checkUserEngagement();
+                observer.disconnect();
+              }
+            }
+          });
+        }, { threshold: 0.5 });
+        
+        // Observe sections when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+          const sections = document.querySelectorAll('div, section, main');
+          if (sections.length > 3) {
+            for (let i = 2; i < Math.min(sections.length, 6); i++) {
+              observer.observe(sections[i]);
+            }
+          }
+        });
+        
+        // only load if user stays on page for 15+ seconds
+        setTimeout(() => {
+          if (!userEngaged) {
+            loadGTM();
+          }
+        }, 15000);
+      }
+    </script>
+
+    <!-- GTM noscript - moved to bottom for better performance -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-586VDG4"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

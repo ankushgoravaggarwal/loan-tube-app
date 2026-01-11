@@ -1,0 +1,272 @@
+/* OfferPageSidebar Styles */
+
+/* Mobile Header Styles */
+.offer-page-mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 8px;
+    background-color: #fff;
+  }
+  
+  .offer-page-mobile-logo img {
+    height: auto;
+    width: 150px;
+  }
+  
+  .offer-page-mobile-rating {
+    display: flex;
+    align-items: center;
+    border: 2px solid #000;
+    padding: 8px;
+    border-radius: 5px;
+  }
+  
+  .offer-page-google-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .offer-page-google-icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 5px;
+  }
+  
+  /* Partner specific styles */
+  .offer-page-partner-rating-logo {
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+  }
+  
+  .offer-page-partner-rating-logo img {
+    max-height: 28px;
+    max-width: 60px;
+    object-fit: contain;
+  }
+  
+  /* When only the partner logo is shown in the rating box */
+  .offer-page-partner-rating-logo-only {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .offer-page-partner-rating-logo-only img {
+    height: auto;
+    width: 150px;
+    object-fit: contain;
+  }
+  
+  .offer-page-rating-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #333;
+    line-height: 1.4;
+  }
+  
+  .offer-page-rating-score {
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    font-size: 12px;
+    gap: 4px;
+    color: #000;
+  }
+  
+  .offer-page-stars-img {
+    height: 14px;
+    width: auto;
+  }
+  
+  /* Show mobile header on mobile */
+  @media (max-width: 1023px) {
+    .offer-page-mobile-header {
+      display: flex;
+    }
+  }
+
+  /* Hide mobile header on desktop */
+  @media (min-width: 1024px) {
+    .offer-page-mobile-header {
+      display: none;
+    }
+  }
+  
+  /* Offer Page Sidebar */
+  .offer-sidebar {
+    display: none;
+    width: 460px;
+    background-color: #E2F0EB;
+    padding: 36px;
+    flex-shrink: 0;
+  }
+  
+  @media (min-width: 1024px) {
+    .offer-sidebar {
+      display: block;
+    }
+  }
+  
+  .offer-sidebar-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .offer-logo-container {
+    margin-bottom: 30px;
+  }
+  
+  .offer-logo-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+  
+  .offer-logo {
+    width: 220px;
+    height: auto;
+    object-fit: contain;
+  }
+  
+  .offer-pledge-box {
+    background-color: white;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1rem;
+    margin-bottom: 20px;
+    border: 1.5px solid black;
+  }
+  
+  .offer-pledge-box:has(.offer-partner-pledge-logo-only) {
+    padding-left: 1rem;
+  }
+  
+  .offer-pledge-content {
+    display: flex;
+    align-items: center;
+  }
+  
+  .offer-pledge-icon-wrapper {
+    flex-shrink: 0;
+    margin-right: 1rem;
+  }
+  
+  .offer-pledge-icon {
+    width: 75px;
+    height: auto;
+  }
+  
+  .offer-pledge-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1e2b3c;
+  }
+  
+  .offer-pledge-text {
+    color: #4b5563;
+    font-size: 16px;
+  }
+  
+  /* Partner-specific styles */
+  .offer-partner-pledge-logo {
+    margin-left: auto;
+    padding-left: 0.5rem;
+  }
+  
+  .offer-partner-pledge-logo img {
+    max-width: 60px;
+    max-height: 40px;
+    object-fit: contain;
+  }
+  
+  /* When only the partner logo is shown in the pledge box */
+  .offer-partner-pledge-logo-only {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .offer-partner-pledge-logo-only img {
+    width: 350px;
+    height: 100px;
+    object-fit: contain;
+  }
+  
+  @media (max-width: 640px) {
+    .offer-pledge-box {
+      padding: 0.5rem;
+    }
+    .offer-pledge-icon {
+      width: 50px;
+    }
+    .offer-pledge-title {
+      font-size: 18px;
+    }
+    .offer-pledge-text {
+      font-size: 14px;
+    }
+    .offer-partner-pledge-logo-only img {
+      width: 250px;
+      height: 80px;
+    }
+  }
+  
+  .offer-warning-box {
+    background-color: white;
+    border-radius: 10px;
+    padding-top: 36px;
+    padding-bottom: 36px;
+    padding-left: 24px;
+    padding-right: 24px;
+    border: none;
+  }
+  
+  .comission-disclosure-box {
+    background-color: white;
+    border-radius: 10px;
+    margin-top: 20px;
+    padding-top: 36px;
+    padding-bottom: 36px;
+    padding-left: 24px;
+    padding-right: 24px;
+    border: none;
+  }
+  
+  .offer-warning-content {
+    font-size: 14px;
+    font-family: Montserrat;
+    line-height: 25px;
+    text-align: center;
+    font-weight: 400;
+    color: #4b5563;
+  }
+  
+  .offer-warning-title {
+    padding-top: 5px;
+    margin: 0 0 8px 0;
+  }
+  
+  .offer-warning-title-bold {
+    font-weight: 600;
+  }
+
+  .offer-warning-subtitle {
+    padding-top: 5px;
+    margin: 0;
+  }
+  
+  .offer-warning-content a {
+    color: #ff2048;
+    text-decoration: none;
+  }
+  
+  .offer-warning-content a:hover {
+    text-decoration: underline;
+  }

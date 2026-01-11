@@ -1,0 +1,155 @@
+.offer-footer {
+  background-color: #f3f3f3;
+  padding: 30px 40px;
+  font-size: 14px;
+  color: #444;
+  border-top: 10px solid #44444414;
+}
+
+.offer-footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.offer-partner-footer-info {
+  margin-bottom: 20px;
+  line-height: 1.5;
+  font-size: 14px;
+  color: #444;
+}
+
+.offer-partner-footer-info p {
+  margin: 8px 0;
+  line-height: 1.5rem;
+}
+
+.offer-partner-footer-info strong,
+.offer-partner-footer-info b {
+  font-weight: bold;
+}
+
+.offer-partner-footer-info ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  margin-top: 5px;
+}
+
+.offer-partner-footer-info .offer-footer-highlight {
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.offer-partner-footer-info .offer-footer-warning {
+  margin: 15px 0;
+  font-weight: 500;
+}
+
+.offer-partner-footer-info .offer-footer-securenote {
+  margin: 15px 0;
+  font-weight: bold;
+}
+
+.offer-partner-footer-info .offer-footer-example {
+  margin: 15px 0;
+}
+
+.offer-partner-footer-info a {
+  color: #000;
+  text-decoration: none;
+}
+
+.offer-partner-footer-info a:hover {
+  text-decoration: underline;
+}
+
+.offer-footer-legal p {
+  margin: 8px 0;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.offer-footer-link {
+  color: #000;
+  text-decoration: none;
+}
+
+.offer-footer-link:hover {
+  text-decoration: underline;
+}
+
+.offer-footer-highlight {
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.offer-footer-example {
+  margin: 15px 0;
+  text-align: left;
+}
+
+.offer-footer-warning {
+  margin: 15px 0;
+  font-weight: 500;
+}
+
+.offer-footer-securenote {
+  margin: 15px 0;
+  font-weight: bold;
+}
+
+.offer-footer-list {
+  list-style-type: disc;
+  margin-left: 20px;
+  margin-top: 5px;
+}
+
+.offer-footer-links {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+  text-align: center;
+}
+
+.offer-footer-separator {
+  height: 1px;
+  background-color: #ddd;
+  margin: 15px auto;
+  width: 100%;
+}
+
+.offer-partner-footer-links {
+  border-top: none;
+  margin-top: 10px;
+  padding-top: 0;
+}
+
+.offer-footer-policy-link {
+  color: #444444;
+  text-decoration: none;
+  margin: 0 6px;
+  white-space: nowrap;
+}
+
+.offer-footer-policy-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .offer-footer {
+    padding: 20px 15px;
+    margin-top: 50%;
+    font-size: 12px;
+  }
+  
+  .offer-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .offer-footer-policy-link {
+    margin: 0;
+    position: relative;
+  }
+} 

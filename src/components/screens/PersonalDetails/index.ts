@@ -1,0 +1,9 @@
+export { default as TitleScreen } from './TitleScreen';
+export { default as NameScreen } from './NameScreen';
+export { default as DateOfBirthScreen } from './DateOfBirthScreen';
+export { default as EmailScreen } from './EmailScreen';
+export { default as MobileScreen } from './MobileScreen';
+export { default as VerificationScreen } from './VerificationScreen';
+export { default as MaritalStatusScreen } from './MaritalStatusScreen';
+export { default as DependentsScreen } from './DependentsScreen';
+export { default as OTPVerification } from './OTPVerification'; 

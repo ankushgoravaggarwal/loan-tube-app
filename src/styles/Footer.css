@@ -1,0 +1,153 @@
+.loan-footer {
+  background-color: #f3f3f3;
+  padding: 30px 40px;
+  font-size: 14px;
+  color: #444;
+  border-top: 10px solid #44444414;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.partner-footer-info {
+  margin-bottom: 20px;
+  line-height: 1.5;
+  font-size: 14px;
+  color: #444;
+}
+
+.partner-footer-info p {
+  margin: 8px 0;
+  line-height: 1.5rem;
+}
+
+.partner-footer-info strong,
+.partner-footer-info b {
+  font-weight: bold;
+}
+
+.partner-footer-info ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  margin-top: 5px;
+}
+
+.partner-footer-info .footer-highlight {
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.partner-footer-info .footer-warning {
+  margin: 15px 0;
+  font-weight: 500;
+}
+
+.partner-footer-info .footer-securenote {
+  margin: 15px 0;
+  font-weight: bold;
+}
+
+.partner-footer-info .footer-example {
+  margin: 15px 0;
+}
+
+.partner-footer-info a {
+  color: #000;
+  text-decoration: none;
+}
+
+.partner-footer-info a:hover {
+  text-decoration: underline;
+}
+
+.footer-legal p {
+  margin: 8px 0;
+  line-height: 1.5;
+}
+
+.footer-link {
+  color: #000;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  text-decoration: underline;
+}
+
+.footer-highlight {
+  font-weight: bold;
+  margin: 15px 0;
+}
+
+.footer-example {
+  margin: 15px 0;
+}
+
+.footer-warning {
+  margin: 15px 0;
+  font-weight: 500;
+}
+
+.footer-securenote {
+  margin: 15px 0;
+  font-weight: bold;
+}
+
+.footer-list {
+  list-style-type: disc;
+  margin-left: 20px;
+  margin-top:5px;
+}
+
+.footer-links {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+  text-align: center;
+}
+
+.footer-separator {
+  height: 1px;
+  background-color: #ddd;
+  margin: 15px auto;
+  width: 100%;
+}
+
+.partner-footer-links {
+  border-top: none;
+  margin-top: 10px;
+  padding-top: 0;
+}
+
+.footer-policy-link {
+  color: #444444;
+  text-decoration: none;
+  margin: 0 6px;
+  white-space: nowrap;
+}
+
+.footer-policy-link:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .loan-footer {
+    padding: 20px 15px;
+    margin-top: 50%;
+    font-size: 12px;
+  }
+  
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .footer-policy-link {
+    margin: 0;
+    position: relative;
+  }
+} 

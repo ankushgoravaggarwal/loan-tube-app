@@ -1,0 +1,173 @@
+/* Sidebar Styles */
+
+.sidebar {
+  display: none;
+  width: 460px;
+  background-color: #E2F0EB;
+  padding: 36px;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    display: block;
+  }
+}
+
+.sidebar-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.logo-container {
+  margin-bottom: 30px;
+}
+
+.logo-wrapper {
+  display: flex;
+  justify-content: flex-start; /* aligns items to the left horizontally */
+  align-items: center; /* aligns items to the middle vertically */
+  margin-top: -10px;
+  gap: 0.5rem;
+}
+
+.logo {
+  width: 220px;
+  height: auto;
+  object-fit: contain;
+}
+
+.pledge-box {
+  background-color: white;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  padding-left: 1.5rem;
+  padding-right: 1rem;
+  margin-bottom: 1rem;
+  border: 1.5px solid black;
+}
+
+/* Reduced padding when partner logo is displayed in pledge box */
+.pledge-box:has(.partner-pledge-logo-only) {
+  padding-left: 1rem;
+}
+
+.pledge-content {
+  display: flex;
+  align-items: center;
+}
+
+.pledge-icon-wrapper {
+  flex-shrink: 0;
+  margin-right: 1rem;
+}
+
+.pledge-icon {
+  width: 75px;
+  height: auto;
+}
+
+.pledge-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1e2b3c;
+}
+
+.pledge-text {
+  color: #4b5563;
+  font-size: 16px;
+}
+
+/* Partner-specific styles */
+.partner-pledge-logo {
+  margin-left: auto;
+  padding-left: 0.5rem;
+}
+
+.partner-pledge-logo img {
+  max-width: 60px;
+  max-height: 40px;
+  object-fit: contain;
+}
+
+/* When only the partner logo is shown in the pledge box */
+.partner-pledge-logo-only {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.partner-pledge-logo-only img {
+  width: 350px;
+  height: 100px;
+  object-fit: contain;
+}
+
+.tagline-container {
+  text-align: center;
+  margin-bottom: 0.75rem;
+}
+
+.tagline {
+  color: #1e2b3c;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.tagline-1 {
+  color: #1e2b3c;
+  font-weight: 600;
+}
+
+.tagline-2 {
+  color: #1e2b3c;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.highlight {
+  color: #ff2048;
+}
+
+.testimonials-container {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.testimonial-card {
+  background-color: white;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.5rem;
+}
+
+.testimonial-name {
+  text-align: center;
+  font-weight: 600;
+  font-size: 14px;
+  color: #ff2048;
+  margin-bottom: 0.5rem;
+}
+
+.stars-container {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.star {
+  width: 24px;
+  height: 24px;
+  color: #fbbf24;
+  fill: currentColor;
+}
+
+.testimonial-text {
+  text-align: center;
+  color: #4b5563;
+  font-size: 12px;
+  font-weight: 500;
+  padding-left: 20px;
+  padding-right: 20px;
+} 

@@ -1,0 +1,28 @@
+<svg width="130" height="24" viewBox="0 0 130 24" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad70">
+      <stop offset="60%" stop-color="#fbbb00" />
+      <stop offset="60%" stop-color="#e3e8ef" />
+    </linearGradient>
+  </defs>
+
+  <!-- Star 1 -->
+  <path transform="translate(0, 0)" fill="#fbbb00"
+    d="M12 2L14.9 8.6L22 9.3L17 14.1L18.2 21.1L12 17.8L5.8 21.1L7 14.1L2 9.3L9.1 8.6L12 2Z"/>
+  
+  <!-- Star 2 -->
+  <path transform="translate(26, 0)" fill="#fbbb00"
+    d="M12 2L14.9 8.6L22 9.3L17 14.1L18.2 21.1L12 17.8L5.8 21.1L7 14.1L2 9.3L9.1 8.6L12 2Z"/>
+  
+  <!-- Star 3 -->
+  <path transform="translate(52, 0)" fill="#fbbb00"
+    d="M12 2L14.9 8.6L22 9.3L17 14.1L18.2 21.1L12 17.8L5.8 21.1L7 14.1L2 9.3L9.1 8.6L12 2Z"/>
+
+  <!-- Star 4 -->
+  <path transform="translate(78, 0)" fill="#fbbb00"
+    d="M12 2L14.9 8.6L22 9.3L17 14.1L18.2 21.1L12 17.8L5.8 21.1L7 14.1L2 9.3L9.1 8.6L12 2Z"/>
+
+  <!-- Star 5 - 60% filled -->
+  <path transform="translate(104, 0)" fill="url(#grad70)"
+    d="M12 2L14.9 8.6L22 9.3L17 14.1L18.2 21.1L12 17.8L5.8 21.1L7 14.1L2 9.3L9.1 8.6L12 2Z"/>
+</svg>

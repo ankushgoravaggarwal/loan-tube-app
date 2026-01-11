@@ -1,0 +1,10 @@
+export { default as PostcodeScreen } from './PostcodeScreen';
+export { default as PreviousAddressScreen } from './PreviousAddressScreen';
+export { default as PreviousAddressCountrySelector } from './PreviousAddress/PreviousAddressCountrySelector';
+export { default as PreviousUKAddressInput } from './PreviousAddress/PreviousUKAddressInput';
+export { default as PreviousManualAddressScreen } from './PreviousManualAddressScreen';
+export { default as OtherCountryManualAddress } from './OtherCountryManualAddress';
+export { default as ResidenceDurationScreen } from './ResidenceDurationScreen';
+export { default as HomeownerStatusScreen } from './HomeownerStatusScreen';
+export { default as PropertyValueScreen } from './PropertyValueScreen';
+export { default as ManualAddressScreen } from './ManualAddressScreen'; 
