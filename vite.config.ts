@@ -55,6 +55,8 @@ export default defineConfig({
   
   // Server configuration for development
   server: {
+    host: '0.0.0.0', // Allow external access
+    port: 5173,
     hmr: {
       overlay: false
     }
