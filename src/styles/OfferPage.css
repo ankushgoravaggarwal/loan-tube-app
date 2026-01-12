@@ -214,9 +214,13 @@
 
 .loan-lender-logo {
   width: 150px;
-  height: auto;
+  height: 60px;
+  min-height: 60px;
   max-height: 60px;
   object-fit: contain;
+  aspect-ratio: 2.5 / 1;
+  /* Prevent layout shift when image loads */
+  display: block;
 }
 
 /* Price Section */

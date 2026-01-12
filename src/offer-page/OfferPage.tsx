@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Check, Info, Star, ChevronDown, X } from 'lucide-react';
 import OfferPageSidebar from './OfferPageSidebar';
@@ -45,6 +45,10 @@ const OfferPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [applicationResult, setApplicationResult] = useState<ApplicationResultResponse | null>(null);
   const [webtoken, setWebtoken] = useState<string | null>(null);
+  
+  // Layout stabilization refs
+  const layoutStabilizedRef = useRef(false);
+  const savedScrollPositionRef = useRef(0);
 
   // Fetch application result from API
   const fetchApplicationResult = useCallback(async (token: string) => {
@@ -90,8 +94,77 @@ const OfferPage: React.FC = () => {
     }
   }, [webtoken]);
 
-  // Extract webtoken from URL on mount
+  // Prevent scroll restoration and stabilize layout
   useEffect(() => {
+    // Prevent browser scroll restoration
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    
+    // Prevent initial scroll jump
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Stabilize layout after offers load to prevent layout shifts
+  useEffect(() => {
+    if (!loading && applicationResult && !layoutStabilizedRef.current) {
+      // Save current scroll position
+      savedScrollPositionRef.current = window.scrollY;
+      
+      // Multiple stabilization passes to ensure layout is stable
+      const stabilizeLayout = () => {
+        // Force multiple reflows to ensure all images are loaded/rendered
+        document.body.offsetHeight;
+        document.documentElement.offsetHeight;
+        
+        // Wait for images to load
+        const images = document.querySelectorAll('img');
+        const imagePromises = Array.from(images).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+            // Timeout after 300ms to not block too long
+            setTimeout(resolve, 300);
+          });
+        });
+        
+        Promise.all(imagePromises).then(() => {
+          // Additional delay to ensure everything is settled
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+              // Force final reflow
+              document.body.offsetHeight;
+              
+              // Mark as stabilized
+              layoutStabilizedRef.current = true;
+              
+              // Restore scroll position if it changed
+              const currentScroll = window.scrollY;
+              if (Math.abs(currentScroll - savedScrollPositionRef.current) > 5) {
+                window.scrollTo({
+                  top: savedScrollPositionRef.current,
+                  behavior: 'auto'
+                });
+              }
+            });
+          });
+        });
+      };
+      
+      // Start stabilization after a small delay to let React finish rendering
+      setTimeout(stabilizeLayout, 100);
+    }
+  }, [loading, applicationResult]);
+
+  // Extract webtoken from URL on mount - only run once
+  const hasFetchedRef = useRef(false);
+  useEffect(() => {
+    // Prevent re-fetching if we already have data
+    if (hasFetchedRef.current && applicationResult) {
+      return;
+    }
+    
     const token = searchParams.get('webtoken');
     console.log('🔍 Checking for webtoken in URL:', { 
       searchParams: searchParams.toString(), 
@@ -99,20 +172,36 @@ const OfferPage: React.FC = () => {
       currentUrl: window.location.href 
     });
     
-    if (token) {
+    if (token && !hasFetchedRef.current) {
       console.log('✅ Webtoken found, fetching application result:', token);
+      hasFetchedRef.current = true;
       setWebtoken(token);
       fetchApplicationResult(token);
-    } else {
+    } else if (!token) {
       console.warn('⚠️ No webtoken found in URL');
       setError('No webtoken found in URL. Please submit the form first.');
       setLoading(false);
     }
-  }, [searchParams, fetchApplicationResult]);
+  }, [searchParams, fetchApplicationResult, applicationResult]);
 
   // Helper Functions
 
-  const handleContinueClick = (offerId: string) => {
+  const handleContinueClick = (e: React.MouseEvent<HTMLButtonElement>, offerId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // If layout not stabilized yet, wait a bit and retry
+    if (!layoutStabilizedRef.current) {
+      // Queue the action to execute after layout stabilizes
+      setTimeout(() => {
+        if (layoutStabilizedRef.current) {
+          setSelectedOfferId(offerId);
+          setIsContinueModalOpen(true);
+        }
+      }, 100);
+      return;
+    }
+    
     setSelectedOfferId(offerId);
     setIsContinueModalOpen(true);
   };
@@ -139,7 +228,23 @@ const OfferPage: React.FC = () => {
 
 
 
-  const toggleOfferDetails = (offerId: string) => {
+  const toggleOfferDetails = (e: React.MouseEvent<HTMLButtonElement>, offerId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // If layout not stabilized yet, wait a bit and retry
+    if (!layoutStabilizedRef.current) {
+      setTimeout(() => {
+        if (layoutStabilizedRef.current) {
+          setExpandedOffers(prev => ({
+            ...prev,
+            [offerId]: !prev[offerId]
+          }));
+        }
+      }, 100);
+      return;
+    }
+    
     setExpandedOffers(prev => ({
       ...prev,
       [offerId]: !prev[offerId]
@@ -283,7 +388,7 @@ const OfferPage: React.FC = () => {
             <span className="loan-type-label">{getProductTypeName(offer.LenderProductType)}</span>
             <button 
               className={`mobile-more-info ${isExpanded ? 'expanded' : ''}`}
-              onClick={() => toggleOfferDetails(offerId)}
+              onClick={(e) => toggleOfferDetails(e, offerId)}
             >
               More Info
               {isExpanded ? (
@@ -352,7 +457,7 @@ const OfferPage: React.FC = () => {
           <div className="loan-mobile-continue-section">
             <button 
               className="loan-continue-btn available"
-              onClick={() => handleContinueClick(offerId)}
+              onClick={(e) => handleContinueClick(e, offerId)}
             >
               Continue
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="evenodd" fill="currentColor" className='loan-continue-btn-icon'>
@@ -387,7 +492,7 @@ const OfferPage: React.FC = () => {
           <div className="loan-action-section">
             <button 
               className="loan-continue-btn available"
-              onClick={() => handleContinueClick(offerId)}
+              onClick={(e) => handleContinueClick(e, offerId)}
             >
               Continue
               <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="evenodd" fill="currentColor" className='loan-continue-btn-icon'>
@@ -402,7 +507,7 @@ const OfferPage: React.FC = () => {
             <span className="loan-type-label">{getProductTypeName(offer.LenderProductType)}</span>
             <button 
               className={`desktop-more-info ${isExpanded ? 'expanded' : ''}`}
-              onClick={() => toggleOfferDetails(offerId)}
+              onClick={(e) => toggleOfferDetails(e, offerId)}
             >
               More Info
               {isExpanded ? (
@@ -508,7 +613,7 @@ const OfferPage: React.FC = () => {
             <span className="loan-type-label">Personal Loan</span>
             <button 
               className={`mobile-more-info ${expandedOffers[offer.id] ? 'expanded' : ''}`}
-              onClick={() => toggleOfferDetails(offer.id)}
+              onClick={(e) => toggleOfferDetails(e, offer.id)}
             >
               More Info
               {expandedOffers[offer.id] ? (
@@ -576,7 +681,7 @@ const OfferPage: React.FC = () => {
           <div className="loan-mobile-continue-section">
             <button 
               className={`loan-continue-btn ${offer.status === 'available' ? 'available' : 'processing'}`}
-              onClick={() => offer.status === 'available' && handleContinueClick(offer.id)}
+              onClick={(e) => offer.status === 'available' && handleContinueClick(e, offer.id)}
               disabled={offer.status === 'processing'}
             >
               {offer.status === 'available' ? (
@@ -613,7 +718,7 @@ const OfferPage: React.FC = () => {
           <div className="loan-action-section">
             <button 
               className={`loan-continue-btn ${offer.status === 'available' ? 'available' : 'processing'}`}
-              onClick={() => offer.status === 'available' && handleContinueClick(offer.id)}
+              onClick={(e) => offer.status === 'available' && handleContinueClick(e, offer.id)}
               disabled={offer.status === 'processing'}
             >
               {offer.status === 'available' ? (
@@ -634,7 +739,7 @@ const OfferPage: React.FC = () => {
             <span className="loan-type-label">Personal Loan</span>
             <button 
               className={`desktop-more-info ${expandedOffers[offer.id] ? 'expanded' : ''}`}
-              onClick={() => toggleOfferDetails(offer.id)}
+              onClick={(e) => toggleOfferDetails(e, offer.id)}
             >
               More Info
               {expandedOffers[offer.id] ? (
@@ -762,7 +867,7 @@ const OfferPage: React.FC = () => {
           <div className="credit-product-action-section">
             <button 
               className={`credit-product-continue-btn ${product.status === 'available' ? 'available' : 'processing'}`}
-              onClick={() => product.status === 'available' && handleContinueClick(product.id)}
+              onClick={(e) => product.status === 'available' && handleContinueClick(e, product.id)}
               disabled={product.status === 'processing'}
             >
               {product.status === 'available' ? 'Continue' : 'Processing'}
@@ -893,7 +998,7 @@ const OfferPage: React.FC = () => {
           <div className="test-product-action-section">
             <button 
               className={`loan-continue-btn ${product.status === 'available' ? 'available' : 'processing'}`}
-              onClick={() => product.status === 'available' && handleContinueClick(product.id)}
+              onClick={(e) => product.status === 'available' && handleContinueClick(e, product.id)}
               disabled={product.status === 'processing'}
             >
               {product.status === 'available' ? (
@@ -1030,7 +1135,22 @@ const OfferPage: React.FC = () => {
                     {applicationResult.IsUpdatable && (
                 <button 
                   className="offer-modify-search-btn"
-                  onClick={() => setIsModifyModalOpen(true)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // If layout not stabilized yet, wait a bit and retry
+                    if (!layoutStabilizedRef.current) {
+                      setTimeout(() => {
+                        if (layoutStabilizedRef.current) {
+                          setIsModifyModalOpen(true);
+                        }
+                      }, 100);
+                      return;
+                    }
+                    
+                    setIsModifyModalOpen(true);
+                  }}
                 >
                   Modify
                 </button>

@@ -2,7 +2,7 @@
 import { FormData } from '../types/FormTypes';
 
 // Backend base URL - centralized configuration
-const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'https://sample.loantube.com';
+const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'http://localhost:8081';
 
 // Environment variables configuration
 const API_CONFIG = {

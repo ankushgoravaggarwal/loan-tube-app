@@ -385,6 +385,14 @@ export const RecaptchaProvider: React.FC<RecaptchaProviderProps> = ({
   const [isRecaptchaLoaded, setIsRecaptchaLoaded] = useState(false);
   const loadedRef = useRef(false);
 
+  // Check if we're on an offer page (no reCAPTCHA needed)
+  const isOfferPage = typeof window !== 'undefined' && (
+    window.location.pathname.startsWith('/offerpage') ||
+    window.location.pathname.startsWith('/customer/application-result') ||
+    window.location.pathname.startsWith('/lender-deeplink') ||
+    window.location.pathname.startsWith('/lender-result')
+  );
+
   const loadRecaptcha = useCallback(() => {
     if (loadedRef.current) return;
     
@@ -394,10 +402,8 @@ export const RecaptchaProvider: React.FC<RecaptchaProviderProps> = ({
   }, []);
 
   useEffect(() => {
-    // For offer page, load immediately to avoid any JavaScript delays
-    const isOfferPage = typeof window !== 'undefined' && window.location.pathname.startsWith('/offerpage');
+    // Skip loading reCAPTCHA on offer pages - not needed there
     if (isOfferPage) {
-      loadRecaptcha();
       return;
     }
 
@@ -415,9 +421,10 @@ export const RecaptchaProvider: React.FC<RecaptchaProviderProps> = ({
       document.removeEventListener('keydown', handleInteraction);
       document.removeEventListener('touchstart', handleInteraction);
     };
-  }, [loadRecaptcha]);
+  }, [loadRecaptcha, isOfferPage]);
 
-  if (!isRecaptchaLoaded) {
+  // On offer pages, always use fallback (no reCAPTCHA needed)
+  if (isOfferPage || !isRecaptchaLoaded) {
     return (
       <FallbackRecaptchaProvider>
         <div className="recaptcha-terms" style={{
