@@ -1289,6 +1289,17 @@
   overflow-y: auto;
 }
 
+.continue-modal-error {
+  margin: 0 2rem 1rem;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  color: #b91c1c;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
 .consent-item {
   display: flex;
   gap: 1rem;

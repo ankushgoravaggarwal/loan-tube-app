@@ -241,6 +241,34 @@
   color: #047857;
 }
 
+.lender-deeplink-error-text {
+  color: #b91c1c;
+  background: #fef2f2;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #fecaca;
+}
+
+.lender-deeplink-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.5rem 0;
+  background: none;
+  border: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: #059669;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.lender-deeplink-back-btn:hover {
+  text-decoration: underline;
+  color: #047857;
+}
+
 /* ========== LENDER RESULT (next steps page) ========== */
 
 .lender-result-content {
@@ -291,6 +319,45 @@
 
 .lender-result-logo-wrap {
   margin-bottom: 1.5rem;
+}
+
+/* Open Banking / Evlo connect section */
+.lender-result-connect-section {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 12px;
+}
+
+@media (min-width: 600px) {
+  .lender-result-connect-section {
+    padding: 1.5rem;
+    margin-bottom: 1.75rem;
+  }
+}
+
+.lender-result-connect-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #059669;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.875rem 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  margin-top: 0.75rem;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35);
+}
+
+.lender-result-connect-btn:hover {
+  background: #047857;
+  color: #fff;
+  transform: translateY(-1px);
 }
 
 .lender-result-logo {

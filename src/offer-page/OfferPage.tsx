@@ -40,6 +40,7 @@ const OfferPage: React.FC = () => {
   const [isContinueModalOpen, setIsContinueModalOpen] = useState(false);
   const [selectedOfferId, setSelectedOfferId] = useState<string | null>(null);
   const [expandedOffers, setExpandedOffers] = useState<Record<string, boolean>>({});
+  const [acceptOfferError, setAcceptOfferError] = useState<string | null>(null);
 
   // API Data State
   const [loading, setLoading] = useState(true);
@@ -208,33 +209,39 @@ const OfferPage: React.FC = () => {
     }
     
     setSelectedOfferId(offerId);
+    setAcceptOfferError(null);
     setIsContinueModalOpen(true);
   };
 
   const handleProceed = () => {
-    if (selectedOfferId && applicationResult) {
-      // Find the offer by ID
-      let selectedOffer: Offer | null = null;
-      for (const group of applicationResult.MatchedLenderList) {
-        const offer = group.offers.find(o => o.OfferID.toString() === selectedOfferId);
-        if (offer) {
-          selectedOffer = offer;
-          break;
-        }
-      }
-      
-      if (selectedOffer && selectedOffer.AcceptUrl) {
-        setIsContinueModalOpen(false);
-        setSelectedOfferId(null);
-        navigate('/lender-deeplink', {
-          state: {
-            acceptUrl: selectedOffer.AcceptUrl,
-            lenderName: selectedOffer.CompanyName,
-            lenderLogo: selectedOffer.CompanyLogoUrl,
-          },
-        });
+    if (!webtoken) {
+      setAcceptOfferError('Tag is required. Please refresh the page and try again.');
+      return;
+    }
+    if (!selectedOfferId || !applicationResult) return;
+
+    let selectedOffer: Offer | null = null;
+    for (const group of applicationResult.MatchedLenderList) {
+      const offer = group.offers.find(o => o.OfferID.toString() === selectedOfferId);
+      if (offer) {
+        selectedOffer = offer;
+        break;
       }
     }
+    if (!selectedOffer) return;
+
+    setAcceptOfferError(null);
+    setIsContinueModalOpen(false);
+    setSelectedOfferId(null);
+
+    navigate('/lender-deeplink', {
+      state: {
+        webtoken,
+        offerId: parseInt(selectedOfferId, 10),
+        lenderName: selectedOffer.CompanyName,
+        lenderLogo: selectedOffer.CompanyLogoUrl,
+      },
+    });
   };
 
 
@@ -1102,6 +1109,7 @@ const OfferPage: React.FC = () => {
             isContinueModalOpen={isContinueModalOpen}
             setIsContinueModalOpen={setIsContinueModalOpen}
             handleProceed={handleProceed}
+            errorMessage={acceptOfferError}
           />
 
           

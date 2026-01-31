@@ -222,9 +222,10 @@ interface ContinueModalProps {
   isContinueModalOpen: boolean;
   setIsContinueModalOpen: (isOpen: boolean) => void;
   handleProceed: () => void;
+  errorMessage?: string | null;
 }
 
-export const ContinueModal: React.FC<ContinueModalProps> = ({ isContinueModalOpen, setIsContinueModalOpen, handleProceed }) => {
+export const ContinueModal: React.FC<ContinueModalProps> = ({ isContinueModalOpen, setIsContinueModalOpen, handleProceed, errorMessage = null }) => {
   if (!isContinueModalOpen) return null;
 
   return (
@@ -235,6 +236,7 @@ export const ContinueModal: React.FC<ContinueModalProps> = ({ isContinueModalOpe
           <button 
             className="modal-close-button"
             onClick={() => setIsContinueModalOpen(false)}
+            aria-label="Close"
           >
             <X size={20} />
           </button>
@@ -244,14 +246,20 @@ export const ContinueModal: React.FC<ContinueModalProps> = ({ isContinueModalOpe
           <div className="consent-item">
             <span className="consent-number">1.</span>
             <p>
-              <em>You confirm that you agree to and accept our</em> <a href="#">Terms and Conditions</a>, <a href="#">Privacy Policy</a> <em>and</em> <a href="#">Cookies Policy</a>.
+              <em>You confirm that you agree to and accept our</em>{' '}
+              <a href="https://www.loantube.com/terms-and-conditions/" target="_blank" rel="noopener noreferrer">Terms and Conditions</a>,{' '}
+              <a href="https://www.loantube.com/privacy-policy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>{' '}
+              <em>and</em>{' '}
+              <a href="https://www.loantube.com/cookies-policy/" target="_blank" rel="noopener noreferrer">Cookie Policy</a>.
             </p>
           </div>
           
           <div className="consent-item">
             <span className="consent-number">2.</span>
             <p>
-              <em>You consent to be contacted by LoanTube, its</em> <a href="#">providers & partners</a> <em>regarding this loan application, your experience with us, and other products and services via email, SMS, phone calls, and postal mail.</em>
+              <em>You consent to be contacted by LoanTube, its</em>{' '}
+              <a href="https://www.loantube.com/our-partners/" target="_blank" rel="noopener noreferrer">Our Partners</a>{' '}
+              <em>regarding this loan application, your experience with us, and other products and services via email, SMS, phone calls, and postal mail.</em>
             </p>
           </div>
           
@@ -269,6 +277,12 @@ export const ContinueModal: React.FC<ContinueModalProps> = ({ isContinueModalOpe
             </p>
           </div>
         </div>
+
+        {errorMessage && (
+          <div className="continue-modal-error" role="alert">
+            {errorMessage}
+          </div>
+        )}
         
         <div className="continue-modal-footer">
           <button 

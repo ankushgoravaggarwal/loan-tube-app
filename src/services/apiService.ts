@@ -881,6 +881,40 @@ export interface UpdateLoanDetailsResult {
   newWebtoken?: string;
 }
 
+// Accept Offer API – response types
+export interface AcceptOfferLenderInfo {
+  branchName: string;
+  branchTelephone: string;
+  lenderCompanyName: string;
+  lenderLogoUrl: string;
+  applicationToken?: string;
+  lenderRefId?: string;
+  applicationException?: string;
+}
+
+export interface AcceptOfferSuccess {
+  status: 'success';
+  message: string;
+  tag: string;
+  timestamp: string;
+  leadId: number;
+  offerId: number;
+  acceptedLenderCode: string;
+  acceptedOfferAt: string;
+  lenderAcceptanceUrl: string | null;
+  lenderInfo: AcceptOfferLenderInfo | null;
+  evloConnectUrl: string | null;
+}
+
+export interface AcceptOfferError {
+  status: 'error';
+  errorCode: string;
+  message: string;
+  timestamp: string;
+}
+
+export type AcceptOfferResponse = AcceptOfferSuccess | AcceptOfferError;
+
 // Application Result API Service
 export class ApplicationResultAPI {
   // Fetch application result using webtoken/tag
@@ -973,6 +1007,36 @@ export class ApplicationResultAPI {
     const applicationResult = payload as unknown as ApplicationResultResponse;
     console.log('✅ Loan details updated successfully:', applicationResult);
     return { applicationResult };
+  }
+
+  /** Accept an offer: POST /api/leads/accept-offer?tag=...&offerId=... */
+  static async acceptOffer(webtoken: string, offerId: number): Promise<AcceptOfferResponse> {
+    const baseUrl = API_CONFIG.LEADS_API_URL || `${BACKEND_BASE_URL}/api/leads`;
+    const apiUrl = baseUrl.replace(/\/api\/leads\/?$/, '/api/leads/accept-offer');
+    const url = `${apiUrl}?tag=${encodeURIComponent(webtoken)}&offerId=${offerId}`;
+
+    console.log('📤 Accepting offer:', { webtoken, offerId, url });
+
+    const response = await baseFetch(url, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'User-Agent': navigator.userAgent },
+    }, 0);
+
+    const text = await response.text();
+    let data: unknown;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new Error(`Invalid response from server: ${text || response.statusText}`);
+    }
+
+    const result = data as AcceptOfferResponse;
+    if (result.status === 'success') {
+      console.log('✅ Offer accepted:', result);
+    } else {
+      console.warn('❌ Accept offer error:', result.errorCode, result.message);
+    }
+    return result;
   }
 }
 

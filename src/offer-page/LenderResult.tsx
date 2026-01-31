@@ -1,7 +1,9 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 import OfferPageHeader from './OfferPageHeader';
 import OfferPageFooter from './OfferPageFooter';
-import { ArrowLeft, Phone } from 'lucide-react';
+import { ArrowLeft, Phone, ExternalLink } from 'lucide-react';
+import type { AcceptOfferLenderInfo } from '../services/apiService';
 import '../styles/OfferPage.css';
 import '../styles/LenderDeeplinkResult.css';
 
@@ -14,6 +16,11 @@ interface LoanDetails {
   totalRepayable: string;
 }
 
+interface LenderResultState {
+  lenderInfo?: AcceptOfferLenderInfo;
+  evloConnectUrl?: string;
+}
+
 interface LenderResultProps {
   lenderName?: string;
   lenderLogo?: string;
@@ -21,18 +28,28 @@ interface LenderResultProps {
   loanDetails?: LoanDetails;
 }
 
-const LenderResult: React.FC<LenderResultProps> = ({
-  lenderName = "Evlo",
-  lenderLogo = "https://dvl9cyxa05rs.cloudfront.net/wp-content/uploads/2025/03/evlo-loans-logo.png",
-  phoneNumber = "0117 4508292",
-  loanDetails = {
-    loanAgreementNumber: "52789125",
-    loanAmount: "£3,000 for 12 months",
-    monthlyInstalment: "£261.09",
-    apr: "58.42%",
-    totalRepayable: "£3,000.00"
-  }
-}) => {
+const DEFAULT_LOAN_DETAILS: LoanDetails = {
+  loanAgreementNumber: "52789125",
+  loanAmount: "£3,000 for 12 months",
+  monthlyInstalment: "£261.09",
+  apr: "58.42%",
+  totalRepayable: "£3,000.00"
+};
+
+const LenderResult: React.FC<LenderResultProps> = (props) => {
+  const location = useLocation();
+  const state = (location.state ?? null) as LenderResultState | null;
+  const lenderInfo = state?.lenderInfo;
+  const evloConnectUrl = state?.evloConnectUrl;
+
+  const lenderName = lenderInfo?.lenderCompanyName ?? props.lenderName ?? "Evlo";
+  const lenderLogo = lenderInfo?.lenderLogoUrl ?? props.lenderLogo ?? "https://dvl9cyxa05rs.cloudfront.net/wp-content/uploads/2025/03/evlo-loans-logo.png";
+  const phoneNumber = lenderInfo?.branchTelephone ?? props.phoneNumber ?? "0117 4508292";
+  const branchName = lenderInfo?.branchName;
+  const loanDetails = props.loanDetails ?? DEFAULT_LOAN_DETAILS;
+  const hasLoanDetailsFromProps = !!props.loanDetails;
+  const showLoanDetailsSection = hasLoanDetailsFromProps || !lenderInfo;
+
   const handleGoBack = () => {
     window.history.back();
   };
@@ -58,36 +75,57 @@ const LenderResult: React.FC<LenderResultProps> = ({
               <img src={lenderLogo} alt={lenderName} className="lender-result-logo" />
             </div>
 
-            <section className="lender-result-details-card" aria-label="Loan details">
-              <h2 className="lender-result-details-title">Your loan details</h2>
-              <div className="lender-result-details-grid">
-                <div className="lender-result-detail-row">
-                  <span className="lender-result-detail-label">Agreement number</span>
-                  <span className="lender-result-detail-value">{loanDetails.loanAgreementNumber}</span>
+            {evloConnectUrl && (
+              <section className="lender-result-connect-section">
+                <h2 className="lender-result-next-step-title">Connect your bank (Open Banking)</h2>
+                <p className="lender-result-next-step-desc">
+                  Continue with {lenderName} to securely connect your bank and complete your application.
+                </p>
+                <a
+                  href={evloConnectUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="lender-result-connect-btn"
+                  aria-label="Continue to open banking with lender"
+                >
+                  <ExternalLink size={20} aria-hidden />
+                  Continue to Open Banking
+                </a>
+              </section>
+            )}
+
+            {showLoanDetailsSection && (
+              <section className="lender-result-details-card" aria-label="Loan details">
+                <h2 className="lender-result-details-title">Your loan details</h2>
+                <div className="lender-result-details-grid">
+                  <div className="lender-result-detail-row">
+                    <span className="lender-result-detail-label">Agreement number</span>
+                    <span className="lender-result-detail-value">{loanDetails.loanAgreementNumber}</span>
+                  </div>
+                  <div className="lender-result-detail-row">
+                    <span className="lender-result-detail-label">Loan amount</span>
+                    <span className="lender-result-detail-value">{loanDetails.loanAmount}</span>
+                  </div>
+                  <div className="lender-result-detail-row">
+                    <span className="lender-result-detail-label">Monthly payment</span>
+                    <span className="lender-result-detail-value">{loanDetails.monthlyInstalment}</span>
+                  </div>
+                  <div className="lender-result-detail-row">
+                    <span className="lender-result-detail-label">APR</span>
+                    <span className="lender-result-detail-value">{loanDetails.apr}</span>
+                  </div>
+                  <div className="lender-result-detail-row">
+                    <span className="lender-result-detail-label">Total repayable</span>
+                    <span className="lender-result-detail-value">{loanDetails.totalRepayable}</span>
+                  </div>
                 </div>
-                <div className="lender-result-detail-row">
-                  <span className="lender-result-detail-label">Loan amount</span>
-                  <span className="lender-result-detail-value">{loanDetails.loanAmount}</span>
-                </div>
-                <div className="lender-result-detail-row">
-                  <span className="lender-result-detail-label">Monthly payment</span>
-                  <span className="lender-result-detail-value">{loanDetails.monthlyInstalment}</span>
-                </div>
-                <div className="lender-result-detail-row">
-                  <span className="lender-result-detail-label">APR</span>
-                  <span className="lender-result-detail-value">{loanDetails.apr}</span>
-                </div>
-                <div className="lender-result-detail-row">
-                  <span className="lender-result-detail-label">Total repayable</span>
-                  <span className="lender-result-detail-value">{loanDetails.totalRepayable}</span>
-                </div>
-              </div>
-            </section>
+              </section>
+            )}
 
             <section className="lender-result-next-step">
               <h2 className="lender-result-next-step-title">What you need to do now</h2>
               <p className="lender-result-next-step-desc">
-                Call {lenderName} on the number below to finish your application. They’ll confirm your details and arrange payout.
+                {branchName ? `Call ${lenderName} (${branchName}) on the number below` : `Call ${lenderName} on the number below`} to finish your application. They’ll confirm your details and arrange payout.
               </p>
               <div className="lender-result-phone-wrap">
                 <a
@@ -102,7 +140,7 @@ const LenderResult: React.FC<LenderResultProps> = ({
             </section>
 
             <div className="lender-result-note">
-              <strong>Important:</strong> You’ll only receive the loan in your bank account after you’ve completed the final steps with {lenderName} by calling the number above.
+              <strong>Important:</strong> You’ll only receive the loan in your bank account after you’ve completed the final steps with {lenderName} by calling the number above{evloConnectUrl ? ' or using Open Banking' : ''}.
             </div>
 
             <div className="lender-result-back-wrap">
