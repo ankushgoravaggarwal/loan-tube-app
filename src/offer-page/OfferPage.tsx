@@ -82,7 +82,11 @@ const OfferPage: React.FC = () => {
       console.log('✅ Loan details updated successfully:', result);
       
       // Update the application result with new data
-      setApplicationResult(result);
+      setApplicationResult(result.applicationResult);
+      // If API returned a new webtoken (lead_id), use it for future requests
+      if (result.newWebtoken) {
+        setWebtoken(result.newWebtoken);
+      }
       
       // Reset expanded offers since we have new data
       setExpandedOffers({});

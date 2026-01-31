@@ -1,7 +1,7 @@
 // API layer 
 import { FormData } from '../types/FormTypes';
 
-// Backend base URL - centralized configuration
+// Backend base URL - used for leads and offer (application result) fetching. Default: localhost.
 const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'http://localhost:8081';
 
 // Environment variables configuration
@@ -14,7 +14,7 @@ const API_CONFIG = {
   SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY as string,
   POSTCODE_API_URL: 'https://www.loantube.com/postcode/validate.php',
   AUDIT_API_URL: 'https://www.emailvalidation.xyz/audit/submitapplication.php',
-  // Leads API URL - constructed from centralized backend base URL
+  // Leads / offer fetching - defaults to localhost:8081
   LEADS_API_URL: import.meta.env.VITE_LEADS_API_URL || `${BACKEND_BASE_URL}/api/leads`
 };
 
@@ -187,24 +187,27 @@ export interface LeadResponse {
   isBase64Encoded?: boolean;
 }
 
-// Base fetch wrapper with error handling
+// Base fetch wrapper with error handling. Pass timeout: 0 to disable (no abort).
 const baseFetch = async (
   url: string,
   options: RequestInit = {},
   timeout: number = 10000
 ): Promise<Response> => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  const useTimeout = timeout > 0;
+  const controller = useTimeout ? new AbortController() : null;
+  const timeoutId = useTimeout && controller
+    ? setTimeout(() => controller.abort(), timeout)
+    : null;
 
   try {
     const response = await fetch(url, {
       ...options,
-      signal: controller.signal,
+      ...(controller && { signal: controller.signal }),
     });
-    clearTimeout(timeoutId);
+    if (timeoutId) clearTimeout(timeoutId);
     return response;
   } catch (error) {
-    clearTimeout(timeoutId);
+    if (timeoutId) clearTimeout(timeoutId);
     throw error;
   }
 };
@@ -872,6 +875,12 @@ export interface ApplicationResultResponse {
   TotalOfferCount: number;
 }
 
+/** Result of update loan details: application result and optional new webtoken (lead_id) to use for future requests */
+export interface UpdateLoanDetailsResult {
+  applicationResult: ApplicationResultResponse;
+  newWebtoken?: string;
+}
+
 // Application Result API Service
 export class ApplicationResultAPI {
   // Fetch application result using webtoken/tag
@@ -897,7 +906,7 @@ export class ApplicationResultAPI {
         'Accept': 'application/json',
         'User-Agent': navigator.userAgent,
       },
-    });
+    }, 0);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -915,8 +924,8 @@ export class ApplicationResultAPI {
     return result as ApplicationResultResponse;
   }
 
-  // Update loan details - returns same format as getApplicationResult
-  static async updateLoanDetails(webtoken: string, loanAmount: number, loanDurationMonths: number): Promise<ApplicationResultResponse> {
+  // Update loan details - may return wrapped { statusCode, body }. If body contains lead_id, use it as webtoken to fetch offers.
+  static async updateLoanDetails(webtoken: string, loanAmount: number, loanDurationMonths: number): Promise<UpdateLoanDetailsResult> {
     const apiUrl = API_CONFIG.LEADS_API_URL?.replace('/api/leads', '/api/leads/update') || 
                    `${BACKEND_BASE_URL}/api/leads/update`;
     
@@ -931,24 +940,39 @@ export class ApplicationResultAPI {
         'Accept': 'application/json',
       },
       // No body needed since data is in query parameters
-    });
+    }, 0);
 
-    let responseData: ApplicationResultResponse;
-
+    const responseText = await response.text();
+    let parsed: { statusCode?: number; body?: unknown };
     try {
-      const responseText = await response.text();
-      responseData = JSON.parse(responseText) as ApplicationResultResponse;
+      parsed = JSON.parse(responseText) as { statusCode?: number; body?: unknown };
     } catch (parseError) {
       throw new Error(`Invalid response from server: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
     }
 
+    // Unwrap Lambda-style response { statusCode, body }
+    let payload: Record<string, unknown> = parsed as Record<string, unknown>;
+    if (typeof parsed.statusCode === 'number' && parsed.body !== undefined) {
+      payload = typeof parsed.body === 'string' ? (JSON.parse(parsed.body) as Record<string, unknown>) : (parsed.body as Record<string, unknown>);
+    }
+
     if (!response.ok) {
-      const errorMsg = (responseData as any)?.error || (responseData as any)?.message || `HTTP ${response.status}: ${response.statusText}`;
+      const errorMsg = (payload as { error?: string; message?: string })?.error ?? (payload as { message?: string })?.message ?? `HTTP ${response.status}: ${response.statusText}`;
       throw new Error(errorMsg);
     }
 
-    console.log('✅ Loan details updated successfully:', responseData);
-    return responseData;
+    // If payload contains lead_id (new webtoken), use it to fetch application result
+    const leadId = payload.lead_id as string | undefined;
+    if (leadId && !payload.MatchedLenderList) {
+      console.log('✅ Update returned lead_id, fetching offers with webtoken:', leadId);
+      const applicationResult = await this.getApplicationResult(leadId);
+      return { applicationResult, newWebtoken: leadId };
+    }
+
+    // Payload is already the full application result
+    const applicationResult = payload as unknown as ApplicationResultResponse;
+    console.log('✅ Loan details updated successfully:', applicationResult);
+    return { applicationResult };
   }
 }
 
