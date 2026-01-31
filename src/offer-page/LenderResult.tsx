@@ -1,8 +1,9 @@
 import React from 'react';
 import OfferPageHeader from './OfferPageHeader';
 import OfferPageFooter from './OfferPageFooter';
+import { ArrowLeft, Phone } from 'lucide-react';
 import '../styles/OfferPage.css';
-import { ArrowLeft } from 'lucide-react';
+import '../styles/LenderDeeplinkResult.css';
 
 interface LoanDetails {
   loanAgreementNumber: string;
@@ -32,90 +33,96 @@ const LenderResult: React.FC<LenderResultProps> = ({
     totalRepayable: "£3,000.00"
   }
 }) => {
-
   const handleGoBack = () => {
     window.history.back();
   };
 
+  const phoneDigits = phoneNumber.replace(/\s/g, '');
+
   return (
-    <div className="offer-page-container">
+    <div className="offer-page-container lender-page-wrap">
       <OfferPageHeader />
-      
-      <main className="offer-main-content">
-        <div className="result-container">
-          <div className="result-content">
-            <div className="result-header">
-              <h1 className="result-title">
-                Congratulations! Your loan is approved in-principle by
-              </h1>
-              
-              <div className="lender-display">
-                <img src={lenderLogo} alt={lenderName} className="result-lender-logo" />
-              </div>
+
+      <main className="offer-main-content lender-page-main">
+        <div className="lender-card">
+          <div className="lender-result-content">
+            <span className="lender-result-badge">Approved in principle</span>
+            <h1 className="lender-result-title">
+              Your next step with {lenderName}
+            </h1>
+            <p className="lender-result-lender-name">
+              {lenderName} has approved your application in principle. Complete the steps below to receive your loan.
+            </p>
+
+            <div className="lender-result-logo-wrap">
+              <img src={lenderLogo} alt={lenderName} className="lender-result-logo" />
             </div>
-            
-            <div className="loan-details-section">
-              <h2 className="details-heading">Here are your loan details:</h2>
-              
-              <div className="details-grid">
-                <div className="detail-card">
-                  <div className="detail-label">Loan Agreement Number</div>
-                  <div className="detail-value">{loanDetails.loanAgreementNumber}</div>
+
+            <section className="lender-result-details-card" aria-label="Loan details">
+              <h2 className="lender-result-details-title">Your loan details</h2>
+              <div className="lender-result-details-grid">
+                <div className="lender-result-detail-row">
+                  <span className="lender-result-detail-label">Agreement number</span>
+                  <span className="lender-result-detail-value">{loanDetails.loanAgreementNumber}</span>
                 </div>
-                
-                <div className="detail-card">
-                  <div className="detail-label">Loan Approved</div>
-                  <div className="detail-value">{loanDetails.loanAmount}</div>
+                <div className="lender-result-detail-row">
+                  <span className="lender-result-detail-label">Loan amount</span>
+                  <span className="lender-result-detail-value">{loanDetails.loanAmount}</span>
                 </div>
-                
-                <div className="detail-card">
-                  <div className="detail-label">Monthly Instalment</div>
-                  <div className="detail-value">{loanDetails.monthlyInstalment}</div>
+                <div className="lender-result-detail-row">
+                  <span className="lender-result-detail-label">Monthly payment</span>
+                  <span className="lender-result-detail-value">{loanDetails.monthlyInstalment}</span>
                 </div>
-                
-                <div className="detail-card">
-                  <div className="detail-label">APR</div>
-                  <div className="detail-value">{loanDetails.apr}</div>
+                <div className="lender-result-detail-row">
+                  <span className="lender-result-detail-label">APR</span>
+                  <span className="lender-result-detail-value">{loanDetails.apr}</span>
                 </div>
-                
-                <div className="detail-card">
-                  <div className="detail-label">Total Repayable Amount</div>
-                  <div className="detail-value">{loanDetails.totalRepayable}</div>
+                <div className="lender-result-detail-row">
+                  <span className="lender-result-detail-label">Total repayable</span>
+                  <span className="lender-result-detail-value">{loanDetails.totalRepayable}</span>
                 </div>
               </div>
-            </div>
-            
-            <div className="completion-section">
-              <p className="completion-text">
-                Please call {lenderName} at the number below to complete the rest of your application with them.
+            </section>
+
+            <section className="lender-result-next-step">
+              <h2 className="lender-result-next-step-title">What you need to do now</h2>
+              <p className="lender-result-next-step-desc">
+                Call {lenderName} on the number below to finish your application. They’ll confirm your details and arrange payout.
               </p>
-              
-              <div className="phone-section">
-                <a href={`tel:${phoneNumber}`} className="phone-button">
-                  Call {phoneNumber}
+              <div className="lender-result-phone-wrap">
+                <a
+                  href={`tel:${phoneDigits}`}
+                  className="lender-result-phone-btn"
+                  aria-label={`Call ${lenderName} on ${phoneNumber}`}
+                >
+                  <Phone size={20} aria-hidden />
+                  <span className="lender-result-phone-num">{phoneNumber}</span>
                 </a>
               </div>
-              
-              <div className="note-section">
-                <p className="note-text">
-                  <strong>Note:</strong> You will only receive the loan amount in your bank account once you have completed the rest of the application process with {lenderName} by calling them at the number above.
-                </p>
-              </div>
+            </section>
+
+            <div className="lender-result-note">
+              <strong>Important:</strong> You’ll only receive the loan in your bank account after you’ve completed the final steps with {lenderName} by calling the number above.
             </div>
-            
-            <div className="back-section">
-              <button onClick={handleGoBack} className="back-button-offer-page">
-                <ArrowLeft size={16} />
-                go back to previous page
+
+            <div className="lender-result-back-wrap">
+              <button
+                type="button"
+                onClick={handleGoBack}
+                className="lender-result-back-btn"
+                aria-label="Go back to previous page"
+              >
+                <ArrowLeft size={18} aria-hidden />
+                Back to previous page
               </button>
             </div>
           </div>
         </div>
       </main>
-      
+
       <OfferPageFooter />
     </div>
   );
 };
 
-export default LenderResult; 
+export default LenderResult;

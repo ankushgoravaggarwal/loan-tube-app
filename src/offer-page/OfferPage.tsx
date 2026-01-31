@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Check, Info, Star, ChevronDown, X } from 'lucide-react';
 import OfferPageSidebar from './OfferPageSidebar';
 import OfferPageFooter from './OfferPageFooter';
@@ -33,6 +33,7 @@ interface CreditProduct {
 
 const OfferPage: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   
   // State Management
   const [isModifyModalOpen, setIsModifyModalOpen] = useState(false);
@@ -223,9 +224,15 @@ const OfferPage: React.FC = () => {
       }
       
       if (selectedOffer && selectedOffer.AcceptUrl) {
-      setIsContinueModalOpen(false);
-        window.open(selectedOffer.AcceptUrl, '_blank');
-      setSelectedOfferId(null);
+        setIsContinueModalOpen(false);
+        setSelectedOfferId(null);
+        navigate('/lender-deeplink', {
+          state: {
+            acceptUrl: selectedOffer.AcceptUrl,
+            lenderName: selectedOffer.CompanyName,
+            lenderLogo: selectedOffer.CompanyLogoUrl,
+          },
+        });
       }
     }
   };
