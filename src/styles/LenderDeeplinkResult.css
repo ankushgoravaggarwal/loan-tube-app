@@ -138,6 +138,12 @@
   object-fit: contain;
 }
 
+.lender-deeplink-lender-name-only {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
 @media (min-width: 600px) {
   .lender-deeplink-logo-loantube {
     height: 44px;

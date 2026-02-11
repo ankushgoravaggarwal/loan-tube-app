@@ -31,6 +31,7 @@ interface LenderResultProps {
 const DEFAULT_LOAN_DETAILS: LoanDetails = {
   loanAgreementNumber: "52789125",
   loanAmount: "£3,000 for 12 months",
+  loanTerm: "12 months",
   monthlyInstalment: "£261.09",
   apr: "58.42%",
   totalRepayable: "£3,000.00"
@@ -42,9 +43,9 @@ const LenderResult: React.FC<LenderResultProps> = (props) => {
   const lenderInfo = state?.lenderInfo;
   const evloConnectUrl = state?.evloConnectUrl;
 
-  const lenderName = lenderInfo?.lenderCompanyName ?? props.lenderName ?? "Evlo";
-  const lenderLogo = lenderInfo?.lenderLogoUrl ?? props.lenderLogo ?? "https://dvl9cyxa05rs.cloudfront.net/wp-content/uploads/2025/03/evlo-loans-logo.png";
-  const phoneNumber = lenderInfo?.branchTelephone ?? props.phoneNumber ?? "0117 4508292";
+  const lenderName = lenderInfo?.lenderCompanyName ?? props.lenderName ?? "the lender";
+  const lenderLogo = lenderInfo?.lenderLogoUrl ?? props.lenderLogo ?? null;
+  const phoneNumber = lenderInfo?.branchTelephone ?? props.phoneNumber ?? "";
   const branchName = lenderInfo?.branchName;
   const loanDetails = props.loanDetails ?? DEFAULT_LOAN_DETAILS;
   const hasLoanDetailsFromProps = !!props.loanDetails;
@@ -71,9 +72,11 @@ const LenderResult: React.FC<LenderResultProps> = (props) => {
               {lenderName} has approved your application in principle. Complete the steps below to receive your loan.
             </p>
 
-            <div className="lender-result-logo-wrap">
-              <img src={lenderLogo} alt={lenderName} className="lender-result-logo" />
-            </div>
+            {lenderLogo && (
+              <div className="lender-result-logo-wrap">
+                <img src={lenderLogo} alt={lenderName} className="lender-result-logo" />
+              </div>
+            )}
 
             {evloConnectUrl && (
               <section className="lender-result-connect-section">
@@ -125,22 +128,26 @@ const LenderResult: React.FC<LenderResultProps> = (props) => {
             <section className="lender-result-next-step">
               <h2 className="lender-result-next-step-title">What you need to do now</h2>
               <p className="lender-result-next-step-desc">
-                {branchName ? `Call ${lenderName} (${branchName}) on the number below` : `Call ${lenderName} on the number below`} to finish your application. They’ll confirm your details and arrange payout.
+                {phoneNumber
+                  ? (branchName ? `Call ${lenderName} (${branchName}) on the number below` : `Call ${lenderName} on the number below`) + ' to finish your application. They’ll confirm your details and arrange payout.'
+                  : `Complete your application with ${lenderName} as instructed by them.`}
               </p>
-              <div className="lender-result-phone-wrap">
-                <a
-                  href={`tel:${phoneDigits}`}
-                  className="lender-result-phone-btn"
-                  aria-label={`Call ${lenderName} on ${phoneNumber}`}
-                >
-                  <Phone size={20} aria-hidden />
-                  <span className="lender-result-phone-num">{phoneNumber}</span>
-                </a>
-              </div>
+              {phoneNumber && (
+                <div className="lender-result-phone-wrap">
+                  <a
+                    href={`tel:${phoneDigits}`}
+                    className="lender-result-phone-btn"
+                    aria-label={`Call ${lenderName} on ${phoneNumber}`}
+                  >
+                    <Phone size={20} aria-hidden />
+                    <span className="lender-result-phone-num">{phoneNumber}</span>
+                  </a>
+                </div>
+              )}
             </section>
 
             <div className="lender-result-note">
-              <strong>Important:</strong> You’ll only receive the loan in your bank account after you’ve completed the final steps with {lenderName} by calling the number above{evloConnectUrl ? ' or using Open Banking' : ''}.
+              <strong>Important:</strong> You’ll only receive the loan in your bank account after you’ve completed the final steps with {lenderName}{phoneNumber ? ' by calling the number above' : ''}{evloConnectUrl ? ' or using Open Banking' : ''}.
             </div>
 
             <div className="lender-result-back-wrap">

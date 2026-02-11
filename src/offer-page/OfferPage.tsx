@@ -8,12 +8,6 @@ import { ApplicationResultAPI, type Offer, type MatchedLenderGroup, type Applica
 
 import '../styles/OfferPage.css';
 
-interface LoanOffer {
-  id: string;
-  loanTerm: string;
-  status: 'available' | 'processing';
-}
-
 interface CreditProduct {
   id: string;
   lenderName: string;
@@ -312,42 +306,37 @@ const OfferPage: React.FC = () => {
   // Map lender CompanyCode to logo path
   // Format: {lenderCode}_logo.{extension}
   const getLenderLogoPath = (companyCode: string, companyLogoUrl?: string): string => {
-    // TODO: Hardcoded for demo - will be corrected later
-    return "https://dvl9cyxa05rs.cloudfront.net/wp-content/uploads/2025/04/salad-money_logo.svg";
-    
-    // Original implementation (commented out for demo):
-    // If API provides logo URL, use it first
+    // For now display only from local assets (comment out to use API logo when present)
     // if (companyLogoUrl) {
     //   return companyLogoUrl;
     // }
 
-    // Map CompanyCode to logo filename
-    // const lenderLogoMap: Record<string, string> = {
-    //   '118118Money': '/assets/lenders/118118Money_logo.png',
-    //   '1plus1': '/assets/lenders/1plus1_logo.png',
-    //   'Abound': '/assets/lenders/Abound_logo.svg',
-    //   'DraftyLoans': '/assets/lenders/DraftyLoans_logo.png',
-    //   'EveryDayLoans': '/assets/lenders/EveryDayLoans_logo.png',
-    //   'Evolutionmoney': '/assets/lenders/Evolutionmoney_logo.png',
-    //   'loanscouk': '/assets/lenders/loanscouk_logo.svg',
-    //   'Loans2Go': '/assets/lenders/Loans2Go_logo.png',
-    //   'LoansbyMAL': '/assets/lenders/LoansbyMAL_logo.png',
-    //   'MunzeeLoans': '/assets/lenders/MunzeeLoans_logo.png',
-    //   'SaladMoney': '/assets/lenders/SaladMoney_logo.png',
-    //   'Carki': '/assets/lenders/Carki_logo.png',
-    //   'SavvyLoans': '/assets/lenders/SavvyLoans_logo.png',
-    //   'SelfyLoans': '/assets/lenders/EveryDayLoans_logo.png', // Use EveryDayLoans logo
-    //   'TheMoneyPlatformPersonal': '/assets/lenders/TheMoneyPlatformPersonal_logo.png',
-    //   'TheMoneyPlatformShortTerm': '/assets/lenders/TheMoneyPlatformShortTerm_logo.png',
-    //   'TMAdvances': '/assets/lenders/TMAdvances_logo.png',
-    //   'TootLoans': '/assets/lenders/TootLoans_logo.png',
-    //   'UKCredit': '/assets/lenders/UKCredit_logo.png',
-    //   'Zuto': '/assets/lenders/Zuto_logo.svg',
-    //   '118118MoneyCreditCard': '/assets/lenders/118118Money_logo.png' // Use 118118Money logo
-    // };
+    // Local mapping based on CompanyCode
+    const lenderLogoMap: Record<string, string> = {
+      '118118Money': '/assets/lenders/118118Money_logo.png',
+      '1plus1': '/assets/lenders/1plus1_logo.png',
+      'Abound': '/assets/lenders/Abound_logo.svg',
+      'DraftyLoans': '/assets/lenders/DraftyLoans_logo.png',
+      'EveryDayLoans': '/assets/lenders/EveryDayLoans_logo.png',
+      'Evolutionmoney': '/assets/lenders/Evolutionmoney_logo.png',
+      'loanscouk': '/assets/lenders/loanscouk_logo.svg',
+      'Loans2Go': '/assets/lenders/Loans2Go_logo.png',
+      'LoansbyMAL': '/assets/lenders/LoansbyMAL_logo.png',
+      'MunzeeLoans': '/assets/lenders/MunzeeLoans_logo.png', // see MISSING_LENDER_LOGOS.md
+      'SaladMoney': '/assets/lenders/SaladMoney_logo.png',
+      'Carki': '/assets/lenders/Carki_logo.png',
+      'SavvyLoans': '/assets/lenders/SavvyLoans_logo.png',
+      // 'TheMoneyPlatformPersonal': '/assets/lenders/TheMoneyPlatformPersonal_logo.png',
+      'TheMoneyPlatformShortTerm': '/assets/lenders/TheMoneyPlatformShortTerm_logo.png',
+      'TMAdvances': '/assets/lenders/TMAdvances_logo.png',
+      'TootLoans': '/assets/lenders/TootLoans_logo.png',
+      'UKCredit': '/assets/lenders/UKCredit_logo.png',
+      'Zuto': '/assets/lenders/Zuto_logo.svg',
+      '118118MoneyCreditCard': '/assets/lenders/118118Money_logo.png' // Use 118118Money logo
+    };
 
-    // Return mapped logo or default fallback (use a generic/neutral logo)
-    // return lenderLogoMap[companyCode] || '/assets/loantube-n-logo.svg';
+    // 3) If we don't have a mapping, return empty string so no wrong logo is shown
+    return lenderLogoMap[companyCode] ?? '';
   };
 
   // Format currency
@@ -364,7 +353,9 @@ const OfferPage: React.FC = () => {
   const renderAPIOffer = (offer: Offer) => {
     const offerId = offer.OfferID.toString();
     const isExpanded = expandedOffers[offerId] || false;
-    
+    const logoPath = getLenderLogoPath(offer.CompanyCode, offer.CompanyLogoUrl);
+    const showLogo = logoPath.length > 0;
+
     return (
       <div key={offerId} className="loan-offer-card">
         <div className="loan-card-header">
@@ -383,16 +374,23 @@ const OfferPage: React.FC = () => {
         <div className="loan-card-main-mobile">
           <div className="loan-main-row-1">
             <div className="loan-logo-section">
-              <img 
-                src={getLenderLogoPath(offer.CompanyCode, offer.CompanyLogoUrl)} 
-                alt={offer.CompanyName} 
-                className="loan-lender-logo"
-                loading="lazy"
-                decoding="async"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/assets/loantube-n-logo.svg';
-                }}
-              />
+              {showLogo ? (
+                <img 
+                  src={logoPath} 
+                  alt={offer.CompanyName} 
+                  className="loan-lender-logo"
+                  loading="lazy"
+                  decoding="async"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                    const placeholder = (e.target as HTMLImageElement).nextElementSibling;
+                    if (placeholder) (placeholder as HTMLElement).style.display = 'block';
+                  }}
+                />
+              ) : null}
+              <span className="loan-logo-missing" style={{ display: showLogo ? 'none' : 'block' }} title={`Add /assets/lenders/${offer.CompanyCode}_logo.png or .svg`}>
+                Logo missing
+              </span>
             </div>
             <div className="loan-price-section">
               <div className="loan-monthly-payment">
@@ -488,16 +486,23 @@ const OfferPage: React.FC = () => {
         {/* Desktop Layout */}
         <div className="loan-card-main-desktop">
           <div className="loan-logo-section">
-            <img 
-              src={getLenderLogoPath(offer.CompanyCode, offer.CompanyLogoUrl)} 
-              alt={offer.CompanyName} 
-              className="loan-lender-logo"
-              loading="lazy"
-              decoding="async"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = '/assets/lenders/118118Money_logo.png';
-              }}
-            />
+            {showLogo ? (
+              <img 
+                src={logoPath} 
+                alt={offer.CompanyName} 
+                className="loan-lender-logo"
+                loading="lazy"
+                decoding="async"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  const placeholder = (e.target as HTMLImageElement).nextElementSibling;
+                  if (placeholder) (placeholder as HTMLElement).style.display = 'block';
+                }}
+              />
+            ) : null}
+            <span className="loan-logo-missing" style={{ display: showLogo ? 'none' : 'block' }} title={`Add /assets/lenders/${offer.CompanyCode}_logo.png or .svg`}>
+              Logo missing
+            </span>
           </div>
           
           <div className="loan-price-section">
@@ -585,274 +590,6 @@ const OfferPage: React.FC = () => {
             </p>
           </div>
         </div>
-      </div>
-    );
-  };
-
-  // Old render functions (kept for fallback, will be removed)
-  const renderLoanOffer = (offer: LoanOffer) => {
-    // Note: This function uses hardcoded data and is not currently used
-    // The actual offers are rendered via renderAPIOffer which uses getLenderLogoPath
-    return (
-      <div key={offer.id} className="loan-offer-card">
-        <div className="loan-card-header">
-          <h3 className="loan-card-title">£1000 for 12 months</h3>
-          <div className="loan-card-badge">
-            <span className="pre-approved-text">Pre-approved</span>
-            <div className="star-icon">
-              <Star fill="currentColor"/>
-            </div>
-          </div>
-        </div>
-        
-        {/* Mobile Layout */}
-        <div className="loan-card-main-mobile">
-          {/* First Row: Logo Left, Amount Right */}
-          <div className="loan-main-row-1">
-            <div className="loan-logo-section">
-              <img 
-                src="/assets/lenders/118118Money_logo.png" 
-                alt="SALAD" 
-                className="loan-lender-logo"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div className="loan-price-section">
-              <div className="loan-monthly-payment">
-                <span className="loan-amount">£117.86</span>
-                <span className="loan-period">per month</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Second Row: Personal Loan Left, More Info Right */}
-          <div className="loan-main-row-4">
-            <span className="loan-type-label">Personal Loan</span>
-            <button 
-              className={`mobile-more-info ${expandedOffers[offer.id] ? 'expanded' : ''}`}
-              onClick={(e) => toggleOfferDetails(e, offer.id)}
-            >
-              More Info
-              {expandedOffers[offer.id] ? (
-                <X size={16} className="more-info-icon" />
-              ) : (
-                <ChevronDown size={16} className="more-info-icon" />
-              )}
-            </button>
-          </div>
-
-          {/* Mobile Details Section - Shows loan details on mobile when expanded */}
-          <div 
-            className={`loan-mobile-details-section ${expandedOffers[offer.id] ? 'expanded' : ''}`}
-          >
-            <div className="loan-mobile-details-content">
-              <div className="loan-detail-item">
-                <span className="loan-detail-label">Loan Term</span>
-                <span className="loan-detail-value">{offer.loanTerm}</span>
-              </div>
-              <div className="loan-detail-item">
-                <span className="loan-detail-label">Acceptance Certainty</span>
-                <span className="loan-detail-value">
-                  <Info size={16} className="detail-info-icon" />
-                  NA
-                </span>
-              </div>
-              <div className="loan-detail-item">
-                <span className="loan-detail-label">Loan payout to your bank</span>
-                <span className="loan-detail-value">
-                  <Info size={16} className="detail-info-icon" />
-                  within 24 hours
-                </span>
-              </div>
-              <div className="loan-detail-item">
-                <span className="loan-detail-label">Fees</span>
-                <span className="loan-detail-value">
-                  <Info size={16} className="detail-info-icon" />
-                  No fees
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Third Row: APR Left and Total Amount Right */}
-          <div className="loan-info-rows">
-            <div className="loan-single-row">
-              <div className="loan-left-info">
-                <span className="loan-apr-label">APR</span>
-                <span className="loan-apr-rate">79.5%</span>
-              </div>
-              <div className="loan-right-info">
-                <span className="loan-total-label">Total repayable amount</span>
-                <span className="loan-total-amount">£1,414.32</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Mobile Representative Example Section */}
-          <div className="loan-mobile-representative">
-            <h5>Representative Example</h5>
-            <p>If you borrow £1,000 over 12 months, your representative APR will be 79.50%. Your monthly repayments will be £117.86 and the total amount repayable will be £1,414.32.</p>
-          </div>
-
-          {/* Mobile Continue Button - Centered */}
-          <div className="loan-mobile-continue-section">
-            <button 
-              className={`loan-continue-btn ${offer.status === 'available' ? 'available' : 'processing'}`}
-              onClick={(e) => offer.status === 'available' && handleContinueClick(e, offer.id)}
-              disabled={offer.status === 'processing'}
-            >
-              {offer.status === 'available' ? (
-                <>
-                  Continue
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="evenodd" fill="currentColor" className='loan-continue-btn-icon'>
-                    <path d="M21.883 12l-7.527 6.235.644.765 9-7.521-9-7.479-.645.764 7.529 6.236h-21.884v1h21.883z"/>
-                  </svg>
-                </>
-              ) : 'Processing'}
-            </button>
-          </div>
-        </div>
-
-        {/* Desktop Layout - Modified structure */}
-        <div className="loan-card-main-desktop">
-          <div className="loan-logo-section">
-            <img 
-              src="/assets/lenders/118118Money_logo.png" 
-              alt="SALAD" 
-              className="loan-lender-logo"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-          
-          <div className="loan-price-section">
-            <div className="loan-monthly-payment">
-              <div className="loan-amount">£117.86</div>
-              <div className="loan-period">per month</div>
-            </div>
-          </div>
-          
-          <div className="loan-action-section">
-            <button 
-              className={`loan-continue-btn ${offer.status === 'available' ? 'available' : 'processing'}`}
-              onClick={(e) => offer.status === 'available' && handleContinueClick(e, offer.id)}
-              disabled={offer.status === 'processing'}
-            >
-              {offer.status === 'available' ? (
-                <>
-                  Continue
-                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fillRule="evenodd" clipRule="evenodd" fill="currentColor" className='loan-continue-btn-icon'>
-                    <path d="M21.883 12l-7.527 6.235.644.765 9-7.521-9-7.479-.645.764 7.529 6.236h-21.884v1h21.883z"/>
-                  </svg>
-                </>
-              ) : 'Processing'}
-            </button>
-          </div>
-        </div>
-
-        {/* Desktop Info Row - Modified structure for desktop */}
-        <div className="loan-info-row">
-          <div className="loan-info-left">
-            <span className="loan-type-label">Personal Loan</span>
-            <button 
-              className={`desktop-more-info ${expandedOffers[offer.id] ? 'expanded' : ''}`}
-              onClick={(e) => toggleOfferDetails(e, offer.id)}
-            >
-              More Info
-              {expandedOffers[offer.id] ? (
-                <X size={16} className="more-info-icon" />
-              ) : (
-                <ChevronDown size={16} className="more-info-icon" />
-              )}
-            </button>
-          </div>
-          <span className="loan-apr-rate">79.5% APR</span>
-          <span className="loan-total-section">
-            <span className="loan-total-label">Total repayable amount : </span>
-            <span className="loan-total-amount">£1,414.32</span>
-          </span>
-        </div>
-
-        {/* Desktop Details Section - Shows loan details on desktop when expanded */}
-        <div 
-          className={`loan-desktop-details-section ${expandedOffers[offer.id] ? 'expanded' : ''}`}
-        >
-          <div className="loan-desktop-details-content">
-            <div className="loan-detail-item">
-              <span className="loan-detail-label">Loan Term</span>
-              <span className="loan-detail-value">{offer.loanTerm}</span>
-            </div>
-            <div className="loan-detail-item">
-              <span className="loan-detail-label">Acceptance Certainty</span>
-              <span className="loan-detail-value">
-                <Info size={16} className="detail-info-icon" />
-                NA
-              </span>
-            </div>
-            <div className="loan-detail-item">
-              <span className="loan-detail-label">Loan payout to your bank</span>
-              <span className="loan-detail-value">
-                <Info size={16} className="detail-info-icon" />
-                within 24 hours
-              </span>
-            </div>
-            <div className="loan-detail-item">
-              <span className="loan-detail-label">Fees</span>
-              <span className="loan-detail-value">
-                <Info size={16} className="detail-info-icon" />
-                No fees
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Details Section - Modified for desktop */}
-        <div 
-          className={`loan-details-section ${expandedOffers[offer.id] ? 'expanded' : ''}`}
-        >
-          {/* Loan Details - Hidden on desktop, visible on mobile */}
-          <div className="loan-details-column mobile-only">
-            <div className="loan-detail-item">
-              <span className="loan-detail-label">Loan Term</span>
-              <span className="loan-detail-value">{offer.loanTerm}</span>
-            </div>
-            <div className="loan-detail-item">
-              <span className="loan-detail-label">Acceptance Certainty</span>
-              <span className="loan-detail-value">
-                <Info size={16} className="detail-info-icon" />
-                NA
-              </span>
-            </div>
-            <div className="loan-detail-item">
-              <span className="loan-detail-label">Loan payout to your bank</span>
-              <span className="loan-detail-value">
-                <Info size={16} className="detail-info-icon" />
-                within 24 hours
-              </span>
-            </div>
-            <div className="loan-detail-item">
-              <span className="loan-detail-label">Fees</span>
-              <span className="loan-detail-value">
-                <Info size={16} className="detail-info-icon" />
-                No fees
-              </span>
-            </div>
-          </div>
-
-          {/*New Box-For Test*/}
-          <div className="loan-representative-example desktop-full-width">
-            <p>This Flexible Credit Limit is pre-approved for you, which means you can withdraw it to your bank account straight away. This credit limit is subject to final checks by the lender.</p>
-          </div>
-
-          {/* Representative Example - Full width on desktop */}
-          <div className="loan-representative-example desktop-full-width">
-            <h5>Representative Example</h5>
-            <p>If you borrow £1,000 over 12 months, your representative APR will be 79.50%. Your monthly repayments will be £117.86 and the total amount repayable will be £1,414.32.</p>
-          </div>
-        </div>
-
-
       </div>
     );
   };

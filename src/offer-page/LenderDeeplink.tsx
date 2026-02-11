@@ -17,7 +17,6 @@ export interface LenderDeeplinkState {
   acceptUrl?: string;
 }
 
-const DEFAULT_LENDER_LOGO = "https://dvl9cyxa05rs.cloudfront.net/wp-content/uploads/2025/04/salad-money_logo.svg";
 const TOTAL_SECONDS = 10;
 
 function getAcceptOfferErrorMessage(errorCode: string): string {
@@ -45,8 +44,8 @@ const LenderDeeplink: React.FC = () => {
   const webtoken = state?.webtoken;
   const offerId = state?.offerId;
   const acceptUrl = state?.acceptUrl;
-  const lenderName = state?.lenderName ?? (acceptUrl ? 'the lender' : 'the lender');
-  const lenderLogo = state?.lenderLogo ?? DEFAULT_LENDER_LOGO;
+  const lenderName = state?.lenderName ?? 'the lender';
+  const lenderLogo = state?.lenderLogo ?? null;
 
   const isApiMode = typeof webtoken === 'string' && typeof offerId === 'number';
 
@@ -171,7 +170,7 @@ const LenderDeeplink: React.FC = () => {
                 </div>
                 <div className="lender-deeplink-arrow" aria-hidden="true" />
                 <div className="lender-deeplink-logo-wrap">
-                  <img src={lenderLogo} alt={lenderName} className="lender-deeplink-logo-lender" />
+                  {lenderLogo ? <img src={lenderLogo} alt={lenderName} className="lender-deeplink-logo-lender" /> : <span className="lender-deeplink-lender-name-only">{lenderName}</span>}
                 </div>
               </div>
               <div className="lender-deeplink-progress-wrap">
@@ -210,7 +209,7 @@ const LenderDeeplink: React.FC = () => {
               </div>
               <div className="lender-deeplink-arrow" aria-hidden="true" />
               <div className="lender-deeplink-logo-wrap">
-                <img src={lenderLogo} alt={lenderName} className="lender-deeplink-logo-lender" />
+                {lenderLogo ? <img src={lenderLogo} alt={lenderName} className="lender-deeplink-logo-lender" /> : <span className="lender-deeplink-lender-name-only">{lenderName}</span>}
               </div>
             </div>
 
