@@ -1,8 +1,8 @@
 // API layer 
 import { FormData } from '../types/FormTypes';
 
-// Backend base URL - used for leads and offer (application result) fetching. Default: localhost.
-const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'http://localhost:8081';
+// Backend base URL - used for leads and offer (application result) fetching.
+const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'http://18.170.21.73:8081';
 
 // Environment variables configuration
 const API_CONFIG = {
@@ -14,7 +14,7 @@ const API_CONFIG = {
   SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY as string,
   POSTCODE_API_URL: 'https://www.loantube.com/postcode/validate.php',
   AUDIT_API_URL: 'https://www.emailvalidation.xyz/audit/submitapplication.php',
-  // Leads / offer fetching - defaults to localhost:8081
+  // Leads / offer fetching
   LEADS_API_URL: import.meta.env.VITE_LEADS_API_URL || `${BACKEND_BASE_URL}/api/leads`
 };
 
