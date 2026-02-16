@@ -228,12 +228,13 @@ const OfferPage: React.FC = () => {
     setIsContinueModalOpen(false);
     setSelectedOfferId(null);
 
+    const listingLogoPath = getLenderLogoPath(selectedOffer.CompanyCode, selectedOffer.CompanyLogoUrl);
     navigate('/lender-deeplink', {
       state: {
         webtoken,
         offerId: parseInt(selectedOfferId, 10),
         lenderName: selectedOffer.CompanyName,
-        lenderLogo: selectedOffer.CompanyLogoUrl,
+        lenderLogo: listingLogoPath || undefined,
       },
     });
   };
