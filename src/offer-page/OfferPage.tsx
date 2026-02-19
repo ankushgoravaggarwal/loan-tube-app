@@ -5,8 +5,23 @@ import OfferPageSidebar from './OfferPageSidebar';
 import OfferPageFooter from './OfferPageFooter';
 import { ModifySearchModal, ContinueModal } from './OfferpageModals';
 import { ApplicationResultAPI, type Offer, type MatchedLenderGroup, type ApplicationResultResponse } from '../services/apiService';
+import type { LenderResultLoanDetails } from './LenderResult';
 
 import '../styles/OfferPage.css';
+
+function buildLoanDetailsFromOffer(offer: Offer): LenderResultLoanDetails {
+  const fmt = (n: number, style: 'currency' | 'percent' = 'currency') =>
+    style === 'currency' ? `£${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : `${n.toFixed(2)}%`;
+  return {
+    loanAgreementNumber: offer.LenderReferenceID?.trim() ? offer.LenderReferenceID : undefined,
+    loanAmount: offer.LoanAmount != null ? fmt(offer.LoanAmount) : undefined,
+    loanTerm: offer.LoanDuration != null ? `${offer.LoanDuration} month${offer.LoanDuration !== 1 ? 's' : ''}` : undefined,
+    monthlyInstalment: offer.EMIAmount != null ? fmt(offer.EMIAmount) : undefined,
+    apr: offer.APR != null ? fmt(offer.APR, 'percent') : undefined,
+    fee: offer.Fee != null ? fmt(offer.Fee) : undefined,
+    totalRepayable: offer.TotalPayableAmount != null ? fmt(offer.TotalPayableAmount) : undefined,
+  };
+}
 
 interface CreditProduct {
   id: string;
@@ -229,12 +244,14 @@ const OfferPage: React.FC = () => {
     setSelectedOfferId(null);
 
     const listingLogoPath = getLenderLogoPath(selectedOffer.CompanyCode, selectedOffer.CompanyLogoUrl);
+    const loanDetails = buildLoanDetailsFromOffer(selectedOffer);
     navigate('/lender-deeplink', {
       state: {
         webtoken,
         offerId: parseInt(selectedOfferId, 10),
         lenderName: selectedOffer.CompanyName,
         lenderLogo: listingLogoPath || undefined,
+        loanDetails,
       },
     });
   };

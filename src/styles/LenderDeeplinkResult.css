@@ -275,16 +275,460 @@
   color: #047857;
 }
 
-/* ========== LENDER RESULT (next steps page) ========== */
+/* ========== LENDER RESULT (next steps page – Evlo, Evolution, Selfy, Loans.co.uk) ========== */
+
+.lender-result-card {
+  max-width: 560px;
+}
+
+.lender-result-card--wide {
+  max-width: 640px;
+}
 
 .lender-result-content {
-  padding: 1.5rem 1.25rem 2rem;
+  padding: 1.25rem 1rem 1.75rem;
 }
 
 @media (min-width: 600px) {
   .lender-result-content {
-    padding: 2rem 2rem 2.5rem;
+    padding: 1.75rem 1.5rem 2rem;
   }
+}
+
+/* Hero: compact success block */
+.lender-result-hero {
+  text-align: center;
+  padding: 1rem 0 1.25rem;
+  margin-bottom: 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.lender-result-success-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #047857;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 3px rgba(5, 150, 105, 0.25);
+}
+
+.lender-result-success-badge svg {
+  flex-shrink: 0;
+}
+
+.lender-result-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.3;
+  margin: 0 0 0.4rem;
+}
+
+@media (min-width: 600px) {
+  .lender-result-title {
+    font-size: 1.5rem;
+  }
+}
+
+.lender-result-hero-meta {
+  font-size: 0.8125rem;
+  color: #64748b;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.lender-result-hero-message {
+  color: #059669;
+  font-weight: 500;
+}
+
+.lender-result-hero-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.lender-result-hero-date svg {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* Lender identity: one row, logo + name, tags under */
+.lender-result-identity-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0 1.25rem;
+  margin-bottom: 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.lender-result-identity-row .lender-result-logo-wrap {
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
+.lender-result-identity-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.lender-result-lender-name-single {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 0.35rem;
+  line-height: 1.25;
+}
+
+.lender-result-identity-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.lender-result-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+}
+
+.lender-result-tag--branch {
+  color: #334155;
+}
+
+.lender-result-tag--exception {
+  background: #fef3c7;
+  color: #b45309;
+  font-weight: 600;
+}
+
+/* Primary CTA block – Call (visible without scrolling) */
+.lender-result-cta-block {
+  padding: 1.25rem 0;
+  text-align: center;
+}
+
+.lender-result-cta-copy {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin: 0 0 0.75rem;
+}
+
+.lender-result-cta-block .lender-result-cta-btn {
+  width: 100%;
+  max-width: 320px;
+  min-height: 52px;
+  font-size: 1.0625rem;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4);
+  margin: 0 auto;
+  display: flex;
+}
+
+.lender-result-connect-btn--secondary {
+  display: flex;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto 1rem;
+  background: #fff;
+  color: #059669;
+  border: 2px solid #10b981;
+  box-shadow: none;
+}
+
+.lender-result-connect-btn--secondary:hover {
+  background: #f0fdf4;
+  color: #047857;
+}
+
+/* Two-column: Loan details | References */
+.lender-result-two-col {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 600px) {
+  .lender-result-two-col {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+}
+
+.lender-result-block {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e2e8f0;
+}
+
+.lender-result-block-title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 0.75rem;
+}
+
+.lender-result-compact-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lender-result-compact-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.lender-result-compact-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.lender-result-compact-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+  text-align: right;
+  word-break: break-all;
+}
+
+.lender-result-compact-value--em {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.lender-result-compact-value--mono {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8125rem;
+}
+
+/* Compact note */
+.lender-result-note--compact {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  padding: 0.65rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+/* Legacy / empty state */
+.lender-result-identity-text .lender-result-lender-name {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.25rem;
+}
+
+.lender-result-branch-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.875rem;
+  color: #475569;
+  margin: 0 0 0.5rem;
+}
+
+.lender-result-exception-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #b45309;
+  background: #fef3c7;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #fcd34d;
+}
+
+/* Your application at a glance (coloured info cards) */
+.lender-result-info-card {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  background: #fff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 600px) {
+  .lender-result-info-card {
+    padding: 1.5rem;
+    margin-bottom: 1.75rem;
+  }
+}
+
+.lender-result-info-card-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 1rem;
+  letter-spacing: -0.01em;
+}
+
+.lender-result-info-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+@media (min-width: 480px) {
+  .lender-result-info-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.lender-result-info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  border-left: 4px solid;
+}
+
+.lender-result-info-item--blue {
+  background: #eff6ff;
+  border-left-color: #3b82f6;
+}
+
+.lender-result-info-item--green {
+  background: #ecfdf5;
+  border-left-color: #10b981;
+}
+
+.lender-result-info-item--slate {
+  background: #f8fafc;
+  border-left-color: #64748b;
+}
+
+.lender-result-info-item--amber {
+  background: #fffbeb;
+  border-left-color: #f59e0b;
+}
+
+.lender-result-info-icon {
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.lender-result-info-item--blue .lender-result-info-icon { color: #2563eb; }
+.lender-result-info-item--green .lender-result-info-icon { color: #059669; }
+.lender-result-info-item--slate .lender-result-info-icon { color: #475569; }
+.lender-result-info-item--amber .lender-result-info-icon { color: #d97706; }
+
+.lender-result-info-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.lender-result-info-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.lender-result-info-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1e293b;
+  word-break: break-all;
+}
+
+/* CTA button base (phone, connect, empty-state link) */
+.lender-result-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.875rem 1.5rem;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.1s;
+  border: none;
+  cursor: pointer;
+  min-height: 48px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 600px) {
+  .lender-result-cta-btn {
+    min-height: 52px;
+  }
+}
+
+.lender-result-cta-btn:hover {
+  transform: translateY(-1px);
+}
+
+.lender-result-cta-btn:active {
+  transform: translateY(0);
+}
+
+/* Next step card (call / what to do) */
+.lender-result-next-step-card {
+  padding: 1.25rem;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1px solid #a7f3d0;
+  border-radius: 14px;
+  margin-bottom: 1.25rem;
+}
+
+@media (min-width: 600px) {
+  .lender-result-next-step-card {
+    padding: 1.5rem;
+  }
+}
+
+/* Empty state (no lenderInfo) */
+.lender-result-empty-state {
+  text-align: center;
+}
+
+.lender-result-empty-message {
+  font-size: 0.9375rem;
+  color: #64748b;
+  line-height: 1.55;
+  margin: 0 0 0.75rem;
+  max-width: 36ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.lender-result-empty-link {
+  margin-top: 1rem;
+  background: #059669;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35);
+}
+
+.lender-result-empty-link:hover {
+  background: #047857;
+  color: #fff;
 }
 
 .lender-result-badge {
@@ -300,20 +744,6 @@
   padding: 0.35rem 0.75rem;
   border-radius: 999px;
   margin-bottom: 1rem;
-}
-
-.lender-result-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #1e293b;
-  line-height: 1.35;
-  margin: 0 0 0.25rem;
-}
-
-@media (min-width: 600px) {
-  .lender-result-title {
-    font-size: 1.5rem;
-  }
 }
 
 .lender-result-lender-name {
@@ -344,26 +774,15 @@
 }
 
 .lender-result-connect-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+  margin-top: 0.75rem;
   background: #059669;
   color: #fff;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 0.875rem 1.5rem;
-  border-radius: 12px;
-  text-decoration: none;
-  margin-top: 0.75rem;
-  transition: background 0.2s, transform 0.1s;
   box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35);
 }
 
 .lender-result-connect-btn:hover {
   background: #047857;
   color: #fff;
-  transform: translateY(-1px);
 }
 
 .lender-result-logo {
@@ -460,30 +879,14 @@
 }
 
 .lender-result-phone-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
   background: #059669;
   color: #fff;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 0.875rem 1.5rem;
-  border-radius: 12px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
   box-shadow: 0 2px 8px rgba(5, 150, 105, 0.35);
 }
 
 .lender-result-phone-btn:hover {
   background: #047857;
-  transform: translateY(-1px);
-}
-
-.lender-result-phone-btn:active {
-  transform: translateY(0);
+  color: #fff;
 }
 
 .lender-result-phone-num {

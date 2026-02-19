@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import OfferPageHeader from './OfferPageHeader';
 import OfferPageFooter from './OfferPageFooter';
 import { ApplicationResultAPI, type AcceptOfferResponse } from '../services/apiService';
+import type { LenderResultLoanDetails } from './LenderResult';
 import '../styles/OfferPage.css';
 import '../styles/LenderDeeplinkResult.css';
 
@@ -13,6 +14,8 @@ export interface LenderDeeplinkState {
   offerId?: number;
   lenderName?: string;
   lenderLogo?: string;
+  /** Loan details from offer page → passed through to lender-result */
+  loanDetails?: LenderResultLoanDetails;
   /** Legacy: countdown then redirect to this URL */
   acceptUrl?: string;
 }
@@ -46,6 +49,7 @@ const LenderDeeplink: React.FC = () => {
   const acceptUrl = state?.acceptUrl;
   const lenderName = state?.lenderName ?? 'the lender';
   const lenderLogo = state?.lenderLogo ?? null;
+  const loanDetails = state?.loanDetails;
 
   const isApiMode = typeof webtoken === 'string' && typeof offerId === 'number';
 
@@ -84,6 +88,9 @@ const LenderDeeplink: React.FC = () => {
             state: {
               lenderInfo: res.lenderInfo,
               evloConnectUrl: res.evloConnectUrl ?? undefined,
+              acceptedOfferAt: res.acceptedOfferAt,
+              message: res.message,
+              loanDetails,
             },
             replace: true,
           });

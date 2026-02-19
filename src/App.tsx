@@ -8,8 +8,7 @@ import './styles/App.css';
 const LoanForm = lazy(() => import('./components/LoanForm'));
 const NotFound = lazy(() => import('./components/NotFound'));
 const OfferPage = lazy(() => import('./offer-page/OfferPage'));
-const LenderDeeplink = lazy(() => import('./offer-page/LenderDeeplink'));
-const LenderResult = lazy(() => import('./offer-page/LenderResult'));
+const OfferFlowRoutes = lazy(() => import('./offer-page/OfferFlowRoutes'));
 const TestApp = lazy(() => import('./components/TestApp'));
 
 // Optimized loading component
@@ -78,13 +77,13 @@ const OfferPageRoute = memo(() => {
 
 const LenderDeeplinkRoute = memo(() => (
   <Suspense fallback={null}>
-    <LenderDeeplink />
+    <OfferFlowRoutes />
   </Suspense>
 ));
 
 const LenderResultRoute = memo(() => (
   <Suspense fallback={null}>
-    <LenderResult />
+    <OfferFlowRoutes />
   </Suspense>
 ));
 
