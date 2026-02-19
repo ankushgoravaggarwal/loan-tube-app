@@ -1033,12 +1033,50 @@
   font-family: Montserrat;
 }
 
-.detail-info-icon {
-  color: #9ca3af;
-  cursor: pointer;
+.detail-info-icon-wrap {
+  display: inline-flex;
+  vertical-align: middle;
+  cursor: help;
+  position: relative;
 }
 
-.detail-info-icon:hover {
+/* Instant tooltip, native-like look (light, no delay) */
+.detail-info-icon-wrap[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  transform: translateX(0);
+  width: max-content;
+  max-width: min(90vw, 520px);
+  padding: 6px 12px;
+  background: #fff;
+  color: #1f2937;
+  font-size: 12px;
+  line-height: 1.4;
+  border-radius: 4px;
+  white-space: nowrap;
+  overflow: visible;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  border: 1px solid #e5e7eb;
+  opacity: 0;
+  visibility: hidden;
+  transition: none;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.detail-info-icon-wrap[data-tooltip]:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.detail-info-icon {
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+.detail-info-icon-wrap:hover .detail-info-icon {
   color: #6b7280;
 }
 

@@ -6,27 +6,43 @@ interface InfoModalProps {
   closeInfoModal: () => void;
 }
 
-export const getInfoModalContent = (key: string) => {
-  const infoContent = {
-    'acceptance-certainty': {
-      title: 'Acceptance Certainty',
-      content: 'Acceptance certainty is a score which our lenders provide us for your loan application. It shows the likelihood of you being accepted by a lender based on a soft credit search on you and processing of visible information you provided us in your loan application. However, the displayed loan offers are still subject to affordability, fraud, anti-money laundering and other final verification checks.'
-    },
-    'apr-rate': {
-      title: 'APR Rate',
-      content: 'Rate Guaranteed by LoanTube is a badge that we give to loan offers where we have arrangements with the lender to lock the APR rate for you. However a lender may change this rate for one of the following reasons: You change the loan amount or duration, You provided inaccurate or incomplete information, During the final checks the lender finds some information which makes your profile look riskier than before.'
-    },
-    'quote-valid': {
-      title: 'Quote Valid For',
-      content: 'Your quote will expire after this time duration. Make sure to complete your application before the timer runs out to secure this offer at the current rate.'
-    },
-    'loan-payout': {
-      title: 'Loan Payout to Your Bank',
-      content: 'Loan is paid out to you upon successful acceptance and completion of the rest of the loan application. Payments can be delayed if it\'s a bank holiday or a weekend. The typical payout time is within 24 hours of approval.'
-    }
-  };
+const infoContent = {
+  'acceptance-certainty': {
+    title: 'Acceptance Certainty',
+    content: 'Acceptance certainty is a score which our lenders provide us for your loan application. It shows the likelihood of you being accepted by a lender based on a soft credit search on you and processing of visible information you provided us in your loan application. However, the displayed loan offers are still subject to affordability, fraud, anti-money laundering and other final verification checks.',
+    tooltip: 'Shows likelihood of acceptance based on a soft search; final checks still apply.'
+  },
+  'apr-rate': {
+    title: 'APR Rate',
+    content: 'Rate Guaranteed by LoanTube is a badge that we give to loan offers where we have arrangements with the lender to lock the APR rate for you. However a lender may change this rate for one of the following reasons: You change the loan amount or duration, You provided inaccurate or incomplete information, During the final checks the lender finds some information which makes your profile look riskier than before.',
+    tooltip: 'Rate may be locked; can change if you change amount or duration or if the lender finds new information.'
+  },
+  'quote-valid': {
+    title: 'Quote Valid For',
+    content: 'Your quote will expire after this time duration. Make sure to complete your application before the timer runs out to secure this offer at the current rate.',
+    tooltip: 'Complete your application before this time to secure the offer at the current rate.'
+  },
+  'loan-payout': {
+    title: 'Loan Payout to Your Bank',
+    content: 'Loan is paid out to you upon successful acceptance and completion of the rest of the loan application. Payments can be delayed if it\'s a bank holiday or a weekend. The typical payout time is within 24 hours of approval.',
+    tooltip: 'Typically within 24 hours of approval; may be delayed on weekends or bank holidays.'
+  },
+  'fees': {
+    title: 'Fees',
+    content: 'Fees are charges that the lender may apply to your loan. The amount shown is specific to this offer.',
+    tooltip: 'Charges that the lender may apply to this loan offer.'
+  }
+};
 
-  return infoContent[key as keyof typeof infoContent] || { title: 'Information', content: 'No information available.' };
+export const getInfoModalContent = (key: string) => {
+  const item = infoContent[key as keyof typeof infoContent];
+  return item ? { title: item.title, content: item.content } : { title: 'Information', content: 'No information available.' };
+};
+
+/** Short text for hover tooltip on info icons */
+export const getInfoTooltip = (key: string): string => {
+  const item = infoContent[key as keyof typeof infoContent];
+  return item?.tooltip ?? 'More information';
 };
 
 export const InfoModal: React.FC<InfoModalProps> = ({ activeInfoModal, closeInfoModal }) => {

@@ -3,11 +3,17 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Check, Info, Star, ChevronDown, X } from 'lucide-react';
 import OfferPageSidebar from './OfferPageSidebar';
 import OfferPageFooter from './OfferPageFooter';
-import { ModifySearchModal, ContinueModal } from './OfferpageModals';
+import { ModifySearchModal, ContinueModal, getInfoTooltip } from './OfferpageModals';
 import { ApplicationResultAPI, type Offer, type MatchedLenderGroup, type ApplicationResultResponse } from '../services/apiService';
 import type { LenderResultLoanDetails } from './LenderResult';
 
 import '../styles/OfferPage.css';
+
+/** Show Acceptance Certainty only when 100; otherwise "Not applicable". */
+function formatAcceptanceCertainty(text: string | undefined): string {
+  const v = String(text ?? '').trim();
+  return v === '100' ? '100' : 'Not applicable';
+}
 
 function buildLoanDetailsFromOffer(offer: Offer): LenderResultLoanDetails {
   const fmt = (n: number, style: 'currency' | 'percent' = 'currency') =>
@@ -444,21 +450,27 @@ const OfferPage: React.FC = () => {
                 <div className="loan-detail-item">
                   <span className="loan-detail-label">Acceptance Certainty</span>
                   <span className="loan-detail-value">
-                    <Info size={16} className="detail-info-icon" />
-                    {offer.ApprovalChanceText || 'NA'}
+                    <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('acceptance-certainty')} aria-label={getInfoTooltip('acceptance-certainty')}>
+                      <Info size={16} className="detail-info-icon" aria-hidden />
+                    </span>
+                    {formatAcceptanceCertainty(offer.ApprovalChanceText)}
                   </span>
                 </div>
                 <div className="loan-detail-item">
                   <span className="loan-detail-label">Loan payout to your bank</span>
                   <span className="loan-detail-value">
-                    <Info size={16} className="detail-info-icon" />
+                    <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('loan-payout')} aria-label={getInfoTooltip('loan-payout')}>
+                      <Info size={16} className="detail-info-icon" aria-hidden />
+                    </span>
                     {offer.PayOutDay || 'within 24 hours'}
                   </span>
                 </div>
                 <div className="loan-detail-item">
                   <span className="loan-detail-label">Fees</span>
                   <span className="loan-detail-value">
-                    <Info size={16} className="detail-info-icon" />
+                    <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('fees')} aria-label={getInfoTooltip('fees')}>
+                      <Info size={16} className="detail-info-icon" aria-hidden />
+                    </span>
                     {offer.Fee > 0 ? formatCurrency(offer.Fee) : 'No fees'}
                   </span>
                 </div>
@@ -576,21 +588,27 @@ const OfferPage: React.FC = () => {
               <div className="loan-detail-item">
                 <span className="loan-detail-label">Acceptance Certainty</span>
                 <span className="loan-detail-value">
-                  <Info size={16} className="detail-info-icon" />
-                  {offer.ApprovalChanceText || 'NA'}
+                  <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('acceptance-certainty')} aria-label={getInfoTooltip('acceptance-certainty')}>
+                    <Info size={16} className="detail-info-icon" aria-hidden />
+                  </span>
+                  {formatAcceptanceCertainty(offer.ApprovalChanceText)}
                 </span>
               </div>
               <div className="loan-detail-item">
                 <span className="loan-detail-label">Loan payout to your bank</span>
                 <span className="loan-detail-value">
-                  <Info size={16} className="detail-info-icon" />
+                  <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('loan-payout')} aria-label={getInfoTooltip('loan-payout')}>
+                    <Info size={16} className="detail-info-icon" aria-hidden />
+                  </span>
                   {offer.PayOutDay || 'within 24 hours'}
                 </span>
               </div>
               <div className="loan-detail-item">
                 <span className="loan-detail-label">Fees</span>
                 <span className="loan-detail-value">
-                  <Info size={16} className="detail-info-icon" />
+                  <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('fees')} aria-label={getInfoTooltip('fees')}>
+                    <Info size={16} className="detail-info-icon" aria-hidden />
+                  </span>
                   {offer.Fee > 0 ? formatCurrency(offer.Fee) : 'No fees'}
                 </span>
               </div>
@@ -689,28 +707,36 @@ const OfferPage: React.FC = () => {
             <div className="credit-product-detail-item">
               <span className="credit-product-detail-label">APR Rate</span>
               <span className="credit-product-detail-value">
-                <Info size={16} className="detail-info-icon" />
+                <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('apr-rate')} aria-label={getInfoTooltip('apr-rate')}>
+                  <Info size={16} className="detail-info-icon" aria-hidden />
+                </span>
                 {product.rateGuaranteed ? 'Guaranteed' : 'Variable'}
               </span>
             </div>
             <div className="credit-product-detail-item">
               <span className="credit-product-detail-label">Quote Valid for</span>
               <span className="credit-product-detail-value">
-                <Info size={16} className="detail-info-icon" />
+                <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('quote-valid')} aria-label={getInfoTooltip('quote-valid')}>
+                  <Info size={16} className="detail-info-icon" aria-hidden />
+                </span>
                 {product.quoteValidFor}
               </span>
             </div>
             <div className="credit-product-detail-item">
               <span className="credit-product-detail-label">Loan Payout to your bank</span>
               <span className="credit-product-detail-value">
-                <Info size={16} className="detail-info-icon" />
+<span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('loan-payout')} aria-label={getInfoTooltip('loan-payout')}>
+                <Info size={16} className="detail-info-icon" aria-hidden />
+                </span>
                 {product.loanPayout}
               </span>
             </div>
             <div className="credit-product-detail-item">
               <span className="credit-product-detail-label">Fees</span>
               <span className="credit-product-detail-value">
-                <Info size={16} className="detail-info-icon" />
+<span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('fees')} aria-label={getInfoTooltip('fees')}>
+                <Info size={16} className="detail-info-icon" aria-hidden />
+                </span>
                 {product.fees}
               </span>
             </div>
@@ -823,21 +849,27 @@ const OfferPage: React.FC = () => {
             <div className="test-product-detail-item">
               <span className="test-product-detail-label">APR Rate</span>
               <span className="test-product-detail-value">
-                <Info size={16} className="detail-info-icon" />
+                <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('apr-rate')} aria-label={getInfoTooltip('apr-rate')}>
+                  <Info size={16} className="detail-info-icon" aria-hidden />
+                </span>
                 {product.rateGuaranteed ? 'Guaranteed' : 'Variable'}
               </span>
             </div>
             <div className="test-product-detail-item">
               <span className="test-product-detail-label">Quote Valid for</span>
               <span className="test-product-detail-value">
-                <Info size={16} className="detail-info-icon" />
+                <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('quote-valid')} aria-label={getInfoTooltip('quote-valid')}>
+                  <Info size={16} className="detail-info-icon" aria-hidden />
+                </span>
                 {product.quoteValidFor}
               </span>
             </div>
             <div className="test-product-detail-item">
               <span className="test-product-detail-label">Loan Payout to your bank</span>
               <span className="test-product-detail-value">
-                <Info size={16} className="detail-info-icon" />
+<span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('loan-payout')} aria-label={getInfoTooltip('loan-payout')}>
+                <Info size={16} className="detail-info-icon" aria-hidden />
+                </span>
                 {product.loanPayout}
               </span>
             </div>
