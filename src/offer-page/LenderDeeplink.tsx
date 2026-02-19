@@ -53,7 +53,6 @@ const LenderDeeplink: React.FC = () => {
 
   const isApiMode = typeof webtoken === 'string' && typeof offerId === 'number';
 
-  const [apiLoading, setApiLoading] = useState(isApiMode);
   const [apiError, setApiError] = useState<string | null>(null);
   const [redirectUrlFromApi, setRedirectUrlFromApi] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(TOTAL_SECONDS);
@@ -72,15 +71,12 @@ const LenderDeeplink: React.FC = () => {
         if (cancelled) return;
 
         if (res.status === 'error') {
-          const msg = res.message || getAcceptOfferErrorMessage(res.errorCode);
-          setApiError(msg);
-          setApiLoading(false);
+          setApiError(res.message || getAcceptOfferErrorMessage(res.errorCode));
           return;
         }
 
         if (res.lenderAcceptanceUrl) {
           setRedirectUrlFromApi(res.lenderAcceptanceUrl);
-          setApiLoading(false);
           return;
         }
         if (res.lenderInfo) {
@@ -94,15 +90,12 @@ const LenderDeeplink: React.FC = () => {
             },
             replace: true,
           });
-          setApiLoading(false);
           return;
         }
         setApiError('Unexpected response. Please try again.');
-        setApiLoading(false);
       } catch (err) {
         if (!cancelled) {
           setApiError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
-          setApiLoading(false);
         }
       }
     })();
@@ -159,46 +152,16 @@ const LenderDeeplink: React.FC = () => {
     );
   }
 
-  if (isApiMode && apiLoading) {
-    return (
-      <div className="offer-page-container lender-page-wrap">
-        <OfferPageHeader />
-        <main className="offer-main-content lender-page-main">
-          <div className="lender-card">
-            <div className="lender-deeplink-content">
-              <span className="lender-deeplink-badge">Next step</span>
-              <h1 className="lender-deeplink-title">Accepting your offer</h1>
-              <p className="lender-deeplink-subtitle">
-                Taking you to {lenderName}. Please wait…
-              </p>
-              <div className="lender-deeplink-visual">
-                <div className="lender-deeplink-logo-wrap">
-                  <img src={logoUrl} alt="LoanTube" className="lender-deeplink-logo-loantube" />
-                </div>
-                <div className="lender-deeplink-arrow" aria-hidden="true" />
-                <div className="lender-deeplink-logo-wrap">
-                  {lenderLogo ? <img src={lenderLogo} alt={lenderName} className="lender-deeplink-logo-lender" /> : <span className="lender-deeplink-lender-name-only">{lenderName}</span>}
-                </div>
-              </div>
-              <div className="lender-deeplink-progress-wrap">
-                <div className="offer-loading">
-                  <div className="spinner-container">
-                    <div className="spinner"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </main>
-        <OfferPageFooter />
-      </div>
-    );
-  }
+  // Single screen for redirect path: "Taking you to [lender]" with same layout throughout.
+  // While API is loading (or we're about to navigate to lender-result): show spinner.
+  // When API returns redirect URL: show countdown in place. No separate loader then countdown page.
+  const haveRedirectUrl = redirectUrlFromApi != null;
+  const showSpinner = isApiMode && !apiError && !haveRedirectUrl; // loading or navigating to lender-result
+  const showCountdownUI = haveRedirectUrl || !isApiMode;
 
   return (
     <div className="offer-page-container lender-page-wrap">
       <OfferPageHeader />
-
       <main className="offer-main-content lender-page-main">
         <div className="lender-card">
           <div className="lender-deeplink-content">
@@ -222,39 +185,43 @@ const LenderDeeplink: React.FC = () => {
 
             <div className="lender-deeplink-progress-wrap">
               <p className="lender-deeplink-progress-label">
-                Redirecting in
+                {showSpinner ? 'Preparing redirect…' : 'Redirecting in'}
               </p>
-              <div className="lender-deeplink-progress-bar">
+              <div className={`lender-deeplink-progress-bar ${showSpinner ? 'lender-deeplink-progress-bar--indeterminate' : ''}`}>
                 <div
                   className="lender-deeplink-progress-fill"
-                  style={{ width: `${progressPercent}%` }}
+                  style={showSpinner ? undefined : { width: `${progressPercent}%` }}
                   role="progressbar"
-                  aria-valuenow={countdown}
+                  aria-valuenow={showSpinner ? undefined : countdown}
                   aria-valuemin={0}
                   aria-valuemax={TOTAL_SECONDS}
+                  aria-label={showSpinner ? 'Preparing redirect' : `Redirecting in ${countdown} seconds`}
                 />
               </div>
-              <p className="lender-deeplink-countdown">
-                <span className="lender-deeplink-countdown-num">{countdown}</span> second{countdown !== 1 ? 's' : ''}
-              </p>
+              {showCountdownUI && (
+                <p className="lender-deeplink-countdown">
+                  <span className="lender-deeplink-countdown-num">{countdown}</span> second{countdown !== 1 ? 's' : ''}
+                </p>
+              )}
             </div>
 
-            <div className="lender-deeplink-manual">
-              <p className="lender-deeplink-manual-text">
-                If nothing happens, use the link below.
-              </p>
-              <button
-                type="button"
-                className="lender-deeplink-manual-link"
-                onClick={handleManualContinue}
-              >
-                Continue to next step →
-              </button>
-            </div>
+            {showCountdownUI && (
+              <div className="lender-deeplink-manual">
+                <p className="lender-deeplink-manual-text">
+                  If nothing happens, use the link below.
+                </p>
+                <button
+                  type="button"
+                  className="lender-deeplink-manual-link"
+                  onClick={handleManualContinue}
+                >
+                  Continue to next step →
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </main>
-
       <OfferPageFooter />
     </div>
   );

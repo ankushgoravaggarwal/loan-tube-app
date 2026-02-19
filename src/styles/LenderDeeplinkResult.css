@@ -209,6 +209,17 @@
   transition: width 1s linear;
 }
 
+/* Indeterminate state while waiting for API (no spinner – bar only) */
+.lender-deeplink-progress-bar--indeterminate .lender-deeplink-progress-fill {
+  width: 40% !important;
+  animation: lender-deeplink-indeterminate 1.2s ease-in-out infinite;
+}
+
+@keyframes lender-deeplink-indeterminate {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
 .lender-deeplink-countdown {
   font-size: 1.125rem;
   font-weight: 600;
