@@ -170,21 +170,16 @@ export interface LeadRequest {
   [key: string]: unknown;
 }
 
-// Lead Response Interface
+// Lead Response: response body is the payload directly (no Lambda wrapper)
 export interface LeadResponse {
-  statusCode: number;
-  headers?: Record<string, string>;
-  body: {
-    lead_id?: string;
-    status?: string;
-    status_text?: string;
-    redirect_url?: string;
-    price?: number;
-    timestamp?: string;
-    processing_time?: number;
-    error?: string;
-  };
-  isBase64Encoded?: boolean;
+  lead_id?: string;
+  status?: string;
+  status_text?: string;
+  redirect_url?: string;
+  price?: number;
+  timestamp?: string;
+  processing_time?: number;
+  error?: string;
 }
 
 // Base fetch wrapper with error handling. Pass timeout: 0 to disable (no abort).
@@ -782,29 +777,16 @@ export class LeadsAPI {
       body: JSON.stringify(leadRequest),
     });
 
+    const responseText = await response.text();
     let responseData: LeadResponse;
-
     try {
-      // Try to parse as JSON first
-      const responseText = await response.text();
       responseData = JSON.parse(responseText) as LeadResponse;
-      
-      // If body is a string, parse it
-      if (typeof responseData.body === 'string') {
-        try {
-          responseData.body = JSON.parse(responseData.body);
-        } catch {
-          // If parsing fails, keep as string
-        }
-      }
     } catch (parseError) {
       throw new Error(`Invalid response from server: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
     }
 
     if (!response.ok) {
-      const errorMsg = typeof responseData.body === 'object' && responseData.body?.error 
-        ? responseData.body.error 
-        : `HTTP ${response.status}: ${response.statusText}`;
+      const errorMsg = responseData.error ?? `HTTP ${response.status}: ${response.statusText}`;
       throw new Error(errorMsg);
     }
 
@@ -958,14 +940,14 @@ export class ApplicationResultAPI {
     return result as ApplicationResultResponse;
   }
 
-  // Update loan details - may return wrapped { statusCode, body }. If body contains lead_id, use it as webtoken to fetch offers.
+  // Update loan details - response body is the payload directly (no Lambda wrapper).
+  // Body may be { lead_id } or the full ApplicationResultResponse.
   static async updateLoanDetails(webtoken: string, loanAmount: number, loanDurationMonths: number): Promise<UpdateLoanDetailsResult> {
-    const apiUrl = API_CONFIG.LEADS_API_URL?.replace('/api/leads', '/api/leads/update') || 
+    const apiUrl = API_CONFIG.LEADS_API_URL?.replace('/api/leads', '/api/leads/update') ||
                    `${BACKEND_BASE_URL}/api/leads/update`;
-    
-    // Use query parameters as per the API format: /api/leads/update?tag=abc123xyz&loanAmount=5000&loanDurationMonths=24
+
     const url = `${apiUrl}?tag=${encodeURIComponent(webtoken)}&loanAmount=${loanAmount}&loanDurationMonths=${loanDurationMonths}`;
-    
+
     console.log('🔄 Updating loan details:', { url, webtoken, loanAmount, loanDurationMonths });
 
     const response = await baseFetch(url, {
@@ -973,21 +955,14 @@ export class ApplicationResultAPI {
       headers: {
         'Accept': 'application/json',
       },
-      // No body needed since data is in query parameters
     }, 0);
 
     const responseText = await response.text();
-    let parsed: { statusCode?: number; body?: unknown };
+    let payload: Record<string, unknown>;
     try {
-      parsed = JSON.parse(responseText) as { statusCode?: number; body?: unknown };
+      payload = JSON.parse(responseText) as Record<string, unknown>;
     } catch (parseError) {
       throw new Error(`Invalid response from server: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
-    }
-
-    // Unwrap Lambda-style response { statusCode, body }
-    let payload: Record<string, unknown> = parsed as Record<string, unknown>;
-    if (typeof parsed.statusCode === 'number' && parsed.body !== undefined) {
-      payload = typeof parsed.body === 'string' ? (JSON.parse(parsed.body) as Record<string, unknown>) : (parsed.body as Record<string, unknown>);
     }
 
     if (!response.ok) {
@@ -995,7 +970,7 @@ export class ApplicationResultAPI {
       throw new Error(errorMsg);
     }
 
-    // If payload contains lead_id (new webtoken), use it to fetch application result
+    // If payload contains lead_id (new webtoken) and not full result, fetch application result
     const leadId = payload.lead_id as string | undefined;
     if (leadId && !payload.MatchedLenderList) {
       console.log('✅ Update returned lead_id, fetching offers with webtoken:', leadId);

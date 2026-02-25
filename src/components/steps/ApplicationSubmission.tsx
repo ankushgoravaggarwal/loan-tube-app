@@ -303,15 +303,14 @@ const ApplicationSubmission: React.FC<ApplicationSubmissionProps> = ({
       // Submit lead to backend API (main submission)
       const leadResponse = await LeadsAPI.submitLead(updatedFormData);
       console.log('✅ Lead API Response:', leadResponse);
-      
+
       // Update form data with the applicationId
       setFormData(updatedFormData);
-      
+
       // Check if lead was approved (status === "1")
-      const responseBody = typeof leadResponse.body === 'object' ? leadResponse.body : {};
-      const status = responseBody.status;
-      const redirectUrl = responseBody.redirect_url;
-      
+      const status = leadResponse.status;
+      const redirectUrl = leadResponse.redirect_url;
+
       if (status === '1' && redirectUrl) {
         // The redirect_url from backend points to frontend URL (e.g., http://localhost:8081/customer/application-result?webtoken=...)
         // Extract the path and query params, then navigate to it
@@ -337,7 +336,7 @@ const ApplicationSubmission: React.FC<ApplicationSubmissionProps> = ({
         }
       } else if (status === '2') {
         // Lead was rejected
-        console.error('❌ Lead was rejected:', responseBody);
+        console.error('❌ Lead was rejected:', leadResponse);
         alert('Your application was not approved at this time. Please try again later.');
         setIsLoading(false);
       } else {
