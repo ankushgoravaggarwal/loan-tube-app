@@ -4,7 +4,7 @@
  */
 import React, { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { decodePayload, getLenderVariant, buildLenderResultView } from './utils';
+import { decodePayload, getLenderVariant, buildLenderResultView, getDummyEvloView, getDummySelfyView, getDummyEvolutionView, getDummyLoansCoUkView } from './utils';
 import type { LenderVariant } from './types';
 import ErrorView from './ErrorView';
 import EvloResult from './EvloResult';
@@ -17,6 +17,22 @@ const CustomerLenderResult: React.FC = () => {
   const [searchParams] = useSearchParams();
 
   const { view, variant, error } = useMemo(() => {
+    const testEvlo = searchParams.get('test') === 'evlo';
+    if (testEvlo) {
+      return { view: getDummyEvloView(), variant: 'evlo' as LenderVariant, error: null };
+    }
+    const testSelfy = searchParams.get('test') === 'selfy';
+    if (testSelfy) {
+      return { view: getDummySelfyView(), variant: 'selfy' as LenderVariant, error: null };
+    }
+    const testEvolution = searchParams.get('test') === 'evolution';
+    if (testEvolution) {
+      return { view: getDummyEvolutionView(), variant: 'evolution' as LenderVariant, error: null };
+    }
+    const testLoansCoUk = searchParams.get('test') === 'loanscouk';
+    if (testLoansCoUk) {
+      return { view: getDummyLoansCoUkView(), variant: 'loanscouk' as LenderVariant, error: null };
+    }
     const d = searchParams.get('d');
     if (!d) return { view: null, variant: 'generic' as LenderVariant, error: 'Missing loan data.' };
     const decoded = decodePayload(d);

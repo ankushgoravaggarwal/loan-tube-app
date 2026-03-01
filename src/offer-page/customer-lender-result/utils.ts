@@ -106,3 +106,99 @@ export function buildLenderResultView(data: DecodedLenderData): LenderResultView
     totalNum,
   };
 }
+
+/** Dummy Evlo view for end-to-end testing. Use ?test=evlo to see the full Evlo flow. */
+export function getDummyEvloView(): LenderResultView {
+  return {
+    agreement: '0042956962',
+    loanAmountStr: '£5,000',
+    termStr: '24 months',
+    emiStr: '£230.50',
+    aprStr: '9.9%',
+    totalStr: '£5,532.00',
+    logoUrl: '/assets/lenders/EveryDayLoans_logo.png',
+    branchPhone: '01274 299380',
+    branchName: 'Bradford Branch',
+    lenderName: 'Evlo',
+    isEvloConnect: true,
+    evloConnectUrl: 'https://evlo.co.uk',
+    hasAnyLoanFigures: true,
+    loanAmountNum: 5000,
+    loanDurationNum: 24,
+    emiAmountNum: 230.5,
+    aprNum: 9.9,
+    totalNum: 5532,
+  };
+}
+
+/** Dummy Selfy view for end-to-end testing. Use ?test=selfy to see the full Selfy flow. */
+export function getDummySelfyView(): LenderResultView {
+  return {
+    agreement: '0042957001',
+    loanAmountStr: '£3,000',
+    termStr: '18 months',
+    emiStr: '£185.20',
+    aprStr: '12.5%',
+    totalStr: '£3,333.60',
+    logoUrl: '/assets/lenders/everyday-selfy-loans-logo.png',
+    branchPhone: '01274 299380',
+    branchName: 'Bradford Branch',
+    lenderName: 'Selfy Loans',
+    isEvloConnect: true,
+    evloConnectUrl: 'https://evlo.co.uk',
+    hasAnyLoanFigures: true,
+    loanAmountNum: 3000,
+    loanDurationNum: 18,
+    emiAmountNum: 185.2,
+    aprNum: 12.5,
+    totalNum: 3333.6,
+  };
+}
+
+/** Dummy Evolution Money view for end-to-end testing. Use ?test=evolution to see the Evolution flow. */
+export function getDummyEvolutionView(): LenderResultView {
+  return {
+    agreement: 'EV-8829101',
+    loanAmountStr: '£4,500',
+    termStr: '36 months',
+    emiStr: '£162.40',
+    aprStr: '14.9%',
+    totalStr: '£5,846.40',
+    logoUrl: '/assets/lenders/Evolutionmoney_logo.png',
+    branchPhone: '0161 768 9410',
+    branchName: null,
+    lenderName: 'Evolution Money',
+    isEvloConnect: false,
+    evloConnectUrl: null,
+    hasAnyLoanFigures: true,
+    loanAmountNum: 4500,
+    loanDurationNum: 36,
+    emiAmountNum: 162.4,
+    aprNum: 14.9,
+    totalNum: 5846.4,
+  };
+}
+
+/** Dummy Loans.co.uk view for end-to-end testing. Use ?test=loanscouk to see the Loans.co.uk flow. */
+export function getDummyLoansCoUkView(): LenderResultView {
+  return {
+    agreement: '',
+    loanAmountStr: '£2,500',
+    termStr: '12 months',
+    emiStr: '£225.00',
+    aprStr: '19.9%',
+    totalStr: '£2,700.00',
+    logoUrl: '/assets/lenders/loanscouk_logo.svg',
+    branchPhone: '',
+    branchName: null,
+    lenderName: 'loans-co-uk',
+    isEvloConnect: false,
+    evloConnectUrl: null,
+    hasAnyLoanFigures: true,
+    loanAmountNum: 2500,
+    loanDurationNum: 12,
+    emiAmountNum: 225,
+    aprNum: 19.9,
+    totalNum: 2700,
+  };
+}

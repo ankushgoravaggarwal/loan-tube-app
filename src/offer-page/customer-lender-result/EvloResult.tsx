@@ -22,33 +22,55 @@ const EvloResult: React.FC<EvloResultProps> = ({ view, onGoBack }) => {
         <OfferPageHeader />
         <main className="offer-main-content customer-lender-result-main">
           <div className="customer-lender-result-card customer-lender-result-card--evlo-connect">
-            <h2 className="customer-lender-result-title customer-lender-result-title--modal">You're almost there</h2>
-            <p className="customer-lender-result-subtitle">
-              To complete your loan application, please connect your bank account using{' '}
-              <span className="customer-lender-result-open-banking">Evlo Connect</span>.
-            </p>
-            <ol className="customer-lender-result-steps-list">
-              <h3 className="customer-lender-result-how-it-works">How it works:</h3>
-              <li>You connect your bank account.</li>
-              <li>Your bank securely shares your data with Evlo.</li>
-              <li>Evlo checks your affordability using the data, and completes your application process with you.</li>
-            </ol>
-            <div className="customer-lender-result-note-section">
-              <p className="customer-lender-result-note-text">
-                <span className="customer-lender-result-note-title">Note:</span> Please connect the{' '}
-                <span className="customer-lender-result-main-bank">main bank account</span> where your salary is paid
-                and regular spending is visible.
+            <div className="evlo-connect-hero">
+              {view.logoUrl && (
+                <p className="customer-lender-result-logo-wrap evlo-connect-logo-wrap">
+                  <img src={view.logoUrl} alt="" className="customer-lender-result-logo evlo-connect-logo" />
+                </p>
+              )}
+              <h2 className="evlo-connect-title">You're almost there</h2>
+              <p className="evlo-connect-subtitle">
+                To complete your loan application, please connect your bank account using{' '}
+                <span className="customer-lender-result-open-banking">Evlo Connect</span>.
               </p>
             </div>
-            <a
-              href={view.evloConnectUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="customer-lender-result-connect-btn"
-            >
-              <ExternalLink size={18} aria-hidden />
-              Continue to Evlo Connect
-            </a>
+
+            <div className="evlo-connect-how-section">
+              <h3 className="evlo-connect-how-title">How it works</h3>
+              <ol className="evlo-connect-steps">
+                <li className="evlo-connect-step">
+                  <span className="evlo-connect-step-num">1</span>
+                  <span>You connect your bank account.</span>
+                </li>
+                <li className="evlo-connect-step">
+                  <span className="evlo-connect-step-num">2</span>
+                  <span>Your bank securely shares your data with Evlo.</span>
+                </li>
+                <li className="evlo-connect-step">
+                  <span className="evlo-connect-step-num">3</span>
+                  <span>Evlo checks your affordability and completes your application with you.</span>
+                </li>
+              </ol>
+            </div>
+
+            <div className="evlo-connect-note-box">
+              <p className="evlo-connect-note-label">Note</p>
+              <p className="evlo-connect-note-body">
+                Please connect the <strong>main bank account</strong> where your salary is paid and regular spending is visible.
+              </p>
+            </div>
+
+            <div className="evlo-connect-cta-wrap">
+              <a
+                href={view.evloConnectUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="evlo-connect-cta-btn"
+              >
+                <ExternalLink size={20} aria-hidden />
+                Continue to Evlo Connect
+              </a>
+            </div>
           </div>
         </main>
         <OfferPageFooter />
