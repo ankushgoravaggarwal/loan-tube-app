@@ -1,0 +1,303 @@
+/* Customer Lender Result – /customer/lenderresult?d=... */
+/* Conversion-focused, clear hierarchy, trust-building */
+
+.customer-lender-result-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.customer-lender-result-main {
+  flex: 1;
+  padding: 1.5rem 1rem 2rem;
+  max-width: 640px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.customer-lender-result-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.customer-lender-result-card--evlo-connect {
+  text-align: left;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.customer-lender-result-error {
+  color: #b91c1c;
+  margin: 0 0 1rem;
+  font-size: 1rem;
+}
+
+.customer-lender-result-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.35;
+  margin: 0 0 1.25rem;
+}
+
+.customer-lender-result-title--modal {
+  font-size: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.customer-lender-result-subtitle {
+  font-size: 1.05rem;
+  color: #475569;
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.customer-lender-result-logo-wrap {
+  margin: 0 0 1.25rem;
+}
+
+.customer-lender-result-logo {
+  max-height: 56px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+}
+
+.customer-lender-result-section-label {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+  margin: 0 0 1rem;
+}
+
+.customer-lender-result-details-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.75rem;
+  text-align: left;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.customer-lender-result-details-list li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.95rem;
+}
+
+.customer-lender-result-details-list li:last-child {
+  border-bottom: none;
+}
+
+.customer-lender-result-label {
+  color: #64748b;
+  flex: 0 0 auto;
+}
+
+.customer-lender-result-label span {
+  color: #94a3b8;
+}
+
+.customer-lender-result-value {
+  font-weight: 600;
+  color: #0f172a;
+  text-align: right;
+}
+
+.customer-lender-result-value--mono {
+  font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, monospace;
+}
+
+.customer-lender-result-details-fallback {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.customer-lender-result-branch-block {
+  text-align: left;
+  margin: 1.5rem 0 0;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.customer-lender-result-cta-copy {
+  font-size: 0.95rem;
+  color: #334155;
+  line-height: 1.5;
+  margin: 0 0 0.75rem;
+}
+
+.customer-lender-result-submit-wrap {
+  margin: 1rem 0 1.25rem;
+}
+
+.customer-lender-result-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #0d9488;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.05s;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35);
+}
+
+.customer-lender-result-cta-btn:hover {
+  background: #0f766e;
+}
+
+.customer-lender-result-cta-btn:active {
+  transform: scale(0.98);
+}
+
+.customer-lender-result-cta-hint {
+  display: block;
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-top: 0.35rem;
+  cursor: default;
+}
+
+.customer-lender-result-note-text {
+  font-size: 0.9rem;
+  color: #475569;
+  line-height: 1.5;
+  margin: 0 0 0.75rem;
+}
+
+.customer-lender-result-note-title {
+  font-weight: 600;
+  color: #334155;
+}
+
+.customer-lender-result-main-bank {
+  font-weight: 600;
+  color: #0d9488;
+}
+
+.customer-lender-result-warning {
+  font-size: 0.9rem;
+  color: #92400e;
+  background: #fffbeb;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #f59e0b;
+  margin: 1rem 0 0;
+  line-height: 1.5;
+}
+
+.customer-lender-result-open-banking {
+  font-weight: 700;
+  color: #0d9488;
+}
+
+.customer-lender-result-how-it-works {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 0.5rem;
+}
+
+.customer-lender-result-steps-list {
+  padding-left: 1.25rem;
+  margin: 0 0 1.25rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.customer-lender-result-steps-list li {
+  margin-bottom: 0.35rem;
+}
+
+.customer-lender-result-note-section {
+  margin-bottom: 1.5rem;
+}
+
+.customer-lender-result-connect-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #0d9488;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.35);
+}
+
+.customer-lender-result-connect-btn:hover {
+  background: #0f766e;
+}
+
+.customer-lender-result-prev {
+  margin: 1.75rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.customer-lender-result-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: #64748b;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.customer-lender-result-back-btn:hover {
+  color: #0d9488;
+}
+
+@media (min-width: 480px) {
+  .customer-lender-result-title {
+    font-size: 1.65rem;
+  }
+
+  .customer-lender-result-card {
+    padding: 2.5rem 2rem;
+  }
+
+  .customer-lender-result-details-list {
+    max-width: 420px;
+  }
+}
+
+@media (min-width: 768px) {
+  .customer-lender-result-main {
+    padding: 2rem 1.5rem 3rem;
+  }
+
+  .customer-lender-result-title {
+    font-size: 1.75rem;
+  }
+
+  .customer-lender-result-title--modal {
+    font-size: 1.9rem;
+  }
+}

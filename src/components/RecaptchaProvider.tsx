@@ -389,6 +389,7 @@ export const RecaptchaProvider: React.FC<RecaptchaProviderProps> = ({
   const isOfferPage = typeof window !== 'undefined' && (
     window.location.pathname.startsWith('/offerpage') ||
     window.location.pathname.startsWith('/customer/application-result') ||
+    window.location.pathname.startsWith('/customer/lenderresult') ||
     window.location.pathname.startsWith('/lender-deeplink') ||
     window.location.pathname.startsWith('/lender-result')
   );
