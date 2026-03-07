@@ -1,5 +1,6 @@
 // API layer 
 import { FormData } from '../types/FormTypes';
+import * as Sentry from '@sentry/react';
 
 // Backend base URL - used for leads and offer (application result) fetching. Production: sample.loantube.com
 const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'https://sample.loantube.com';
@@ -916,28 +917,47 @@ export class ApplicationResultAPI {
       fullUrl: url
     });
 
-    const response = await baseFetch(url, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'User-Agent': navigator.userAgent,
-      },
-    }, 0);
+    try {
+      const response = await baseFetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'User-Agent': navigator.userAgent,
+        },
+      }, 0);
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      let errorData;
-      try {
-        errorData = JSON.parse(errorText);
-      } catch {
-        errorData = { message: errorText };
+      if (!response.ok) {
+        const errorText = await response.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { message: errorText };
+        }
+        throw new Error(`Failed to fetch application result: ${errorData.message || response.statusText}`);
       }
-      throw new Error(`Failed to fetch application result: ${errorData.message || response.statusText}`);
-    }
 
-    const result = await response.json();
-    console.log('✅ Application result received:', result);
-    return result as ApplicationResultResponse;
+      const result = await response.json();
+      console.log('✅ Application result received:', result);
+      return result as ApplicationResultResponse;
+    } catch (err) {
+      const apiHost = typeof window !== 'undefined' && apiUrl ? new URL(apiUrl).host : 'unknown';
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      const errorName = err instanceof Error ? err.name : 'Error';
+      Sentry.setTag('api_host', apiHost);
+      Sentry.setTag('endpoint', 'application-result');
+      Sentry.setTag('error_type', errorName);
+      Sentry.setContext('api_failure', {
+        api_host: apiHost,
+        endpoint: 'application-result',
+        error_name: errorName,
+        error_message: errorMessage,
+        page_origin: typeof window !== 'undefined' ? window.location.origin : '',
+        referrer: typeof document !== 'undefined' ? document.referrer || '(none)' : '(none)',
+        likely_cause: '"Load failed" = CORS not allowed from page origin, or network blocked. Fix: allow Origin (e.g. https://offers.loantube.com) on the API server.',
+      });
+      throw err;
+    }
   }
 
   // Update loan details - response body is the payload directly (no Lambda wrapper).
