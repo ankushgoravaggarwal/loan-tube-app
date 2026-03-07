@@ -917,6 +917,7 @@ export class ApplicationResultAPI {
       fullUrl: url
     });
 
+    let httpStatus: number | null = null;
     try {
       const response = await baseFetch(url, {
         method: 'GET',
@@ -927,6 +928,7 @@ export class ApplicationResultAPI {
       }, 0);
 
       if (!response.ok) {
+        httpStatus = response.status;
         const errorText = await response.text();
         let errorData;
         try {
@@ -947,11 +949,15 @@ export class ApplicationResultAPI {
       Sentry.setTag('api_host', apiHost);
       Sentry.setTag('endpoint', 'application-result');
       Sentry.setTag('error_type', errorName);
+      if (httpStatus != null) {
+        Sentry.setTag('http_status', String(httpStatus));
+      }
       Sentry.setContext('api_failure', {
         api_host: apiHost,
         endpoint: 'application-result',
         error_name: errorName,
         error_message: errorMessage,
+        http_status: httpStatus ?? '(no response - e.g. CORS/network)',
         page_origin: typeof window !== 'undefined' ? window.location.origin : '',
         referrer: typeof document !== 'undefined' ? document.referrer || '(none)' : '(none)',
         likely_cause: '"Load failed" = CORS not allowed from page origin, or network blocked. Fix: allow Origin (e.g. https://offers.loantube.com) on the API server.',
