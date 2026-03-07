@@ -68,22 +68,36 @@ const OfferPage: React.FC = () => {
   const layoutStabilizedRef = useRef(false);
   const savedScrollPositionRef = useRef(0);
 
-  // Fetch application result from API
+  // Fetch application result from API (with automatic retry on failure)
+  const MAX_OFFER_FETCH_ATTEMPTS = 3;
+  const OFFER_FETCH_RETRY_DELAY_MS = 1500;
+
   const fetchApplicationResult = useCallback(async (token: string) => {
-    try {
-      console.log('🚀 Starting to fetch application result with token:', token);
-      setLoading(true);
-      setError(null);
-      const result = await ApplicationResultAPI.getApplicationResult(token);
-      console.log('✅ Application result fetched successfully:', result);
-      setApplicationResult(result);
-    } catch (err) {
-      console.error('❌ Error fetching application result:', err);
-      Sentry.captureException(err);
-      setError(err instanceof Error ? err.message : 'Failed to load offers');
-    } finally {
-      setLoading(false);
+    setLoading(true);
+    setError(null);
+    let lastError: Error | null = null;
+
+    for (let attempt = 1; attempt <= MAX_OFFER_FETCH_ATTEMPTS; attempt++) {
+      try {
+        console.log(`🚀 Fetching application result (attempt ${attempt}/${MAX_OFFER_FETCH_ATTEMPTS}) with token:`, token);
+        const result = await ApplicationResultAPI.getApplicationResult(token);
+        console.log('✅ Application result fetched successfully:', result);
+        setApplicationResult(result);
+        setLoading(false);
+        return;
+      } catch (err) {
+        lastError = err instanceof Error ? err : new Error(String(err));
+        console.warn(`❌ Attempt ${attempt}/${MAX_OFFER_FETCH_ATTEMPTS} failed:`, lastError.message);
+        if (attempt < MAX_OFFER_FETCH_ATTEMPTS) {
+          await new Promise((r) => setTimeout(r, OFFER_FETCH_RETRY_DELAY_MS));
+        } else {
+          Sentry.captureException(lastError);
+          setError(lastError.message || 'Failed to load offers');
+        }
+      }
     }
+
+    setLoading(false);
   }, []);
 
   // Handle loan details update
