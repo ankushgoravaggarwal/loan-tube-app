@@ -955,6 +955,7 @@ export class ApplicationResultAPI {
       Sentry.setContext('api_failure', {
         api_host: apiHost,
         endpoint: 'application-result',
+        webtoken,
         error_name: errorName,
         error_message: errorMessage,
         http_status: httpStatus ?? '(no response - e.g. CORS/network)',
