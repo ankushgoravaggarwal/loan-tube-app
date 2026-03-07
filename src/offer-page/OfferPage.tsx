@@ -6,6 +6,7 @@ import OfferPageFooter from './OfferPageFooter';
 import { ModifySearchModal, ContinueModal, getInfoTooltip } from './OfferpageModals';
 import { ApplicationResultAPI, type Offer, type MatchedLenderGroup, type ApplicationResultResponse } from '../services/apiService';
 import type { LenderResultLoanDetails } from './LenderResult';
+import * as Sentry from '@sentry/react';
 
 import '../styles/OfferPage.css';
 
@@ -78,6 +79,7 @@ const OfferPage: React.FC = () => {
       setApplicationResult(result);
     } catch (err) {
       console.error('❌ Error fetching application result:', err);
+      Sentry.captureException(err);
       setError(err instanceof Error ? err.message : 'Failed to load offers');
     } finally {
       setLoading(false);
@@ -109,6 +111,7 @@ const OfferPage: React.FC = () => {
       setExpandedOffers({});
     } catch (err) {
       console.error('❌ Error updating loan details:', err);
+      Sentry.captureException(err);
       throw err; // Re-throw to let the modal handle the error display
     } finally {
       setLoading(false);
