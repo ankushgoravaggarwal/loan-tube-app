@@ -69,8 +69,8 @@ const OfferPage: React.FC = () => {
   const savedScrollPositionRef = useRef(0);
 
   // Fetch application result from API (with automatic retry on failure)
-  const MAX_OFFER_FETCH_ATTEMPTS = 3;
-  const OFFER_FETCH_RETRY_DELAY_MS = 1500;
+  const MAX_OFFER_FETCH_ATTEMPTS = 5;
+  const OFFER_FETCH_RETRY_DELAY_MS = 2000;
 
   const fetchApplicationResult = useCallback(async (token: string) => {
     setLoading(true);
