@@ -5,6 +5,7 @@ import OfferPageHeader from './OfferPageHeader';
 import OfferPageFooter from './OfferPageFooter';
 import { ApplicationResultAPI, type AcceptOfferResponse } from '../services/apiService';
 import type { LenderResultLoanDetails } from './LenderResult';
+import * as Sentry from '@sentry/react';
 import '../styles/OfferPage.css';
 import '../styles/LenderDeeplinkResult.css';
 
@@ -95,6 +96,7 @@ const LenderDeeplink: React.FC = () => {
         setApiError('Unexpected response. Please try again.');
       } catch (err) {
         if (!cancelled) {
+          Sentry.captureException(err);
           setApiError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
         }
       }
