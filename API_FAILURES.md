@@ -1,9 +1,6 @@
-# Sentry: "Load failed" and API errors
+# API "Load failed" and CORS
 
-When affiliates redirect users to the app (e.g. `https://offers.loantube.com/customer/application-result?webtoken=...`), the app runs in the **browser** and calls the **API** (e.g. `https://sample.loantube.com/api/leads/application-result`). If that request fails, Sentry reports:
-
-- **Error:** `TypeError: Load failed (sample.loantube.com)`
-- **Meaning:** The browser could not complete the request to the API host. This is **not** a bug in the frontend; it is almost always one of:
+When affiliates redirect users to the app (e.g. `https://offers.loantube.com/customer/application-result?webtoken=...`), the app runs in the **browser** and calls the **API** (e.g. `https://sample.loantube.com/api/leads/application-result`). If that request fails, the browser may show "Load failed".
 
 ## 1. CORS (most common)
 
@@ -19,17 +16,15 @@ Without this, the browser blocks the response and the frontend sees "Load failed
 
 ## 2. Network / reachability
 
-- User’s network (e.g. mobile carrier) blocking the API domain
-- API host down or not reachable from the user’s region
+- User's network (e.g. mobile carrier) blocking the API domain
+- API host down or not reachable from the user's region
 - DNS or SSL issues for the API host
 
 ## What we do in the app
 
-- **Sentry:** When the application-result request fails, we send tags and context so the issue is visible:
-  - `api_host` (e.g. `sample.loantube.com`)
-  - `endpoint`: `application-result`
-  - Context: `api_failure` with `page_origin`, `referrer`, and `likely_cause` (CORS hint)
-- **Retries:** We retry the request up to 3 times with a short delay before showing an error.
+- **Clarity:** Session replay and heatmaps (Microsoft Clarity) so you can see what the user did before/during failures.
+- **Console:** On application-result failure we log `[api_failure]` with `api_host`, `webtoken`, `error_message`, `http_status` (dev tools).
+- **Retries:** We retry the request up to 5 times with 2s delay before showing an error.
 
 ## Backend checklist
 

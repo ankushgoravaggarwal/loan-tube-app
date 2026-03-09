@@ -1,6 +1,5 @@
 // API layer 
 import { FormData } from '../types/FormTypes';
-import * as Sentry from '@sentry/react';
 
 // Backend base URL - used for leads and offer (application result) fetching. Production: sample.loantube.com
 const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'https://sample.loantube.com';
@@ -945,23 +944,11 @@ export class ApplicationResultAPI {
     } catch (err) {
       const apiHost = typeof window !== 'undefined' && apiUrl ? new URL(apiUrl).host : 'unknown';
       const errorMessage = err instanceof Error ? err.message : String(err);
-      const errorName = err instanceof Error ? err.name : 'Error';
-      Sentry.setTag('api_host', apiHost);
-      Sentry.setTag('endpoint', 'application-result');
-      Sentry.setTag('error_type', errorName);
-      if (httpStatus != null) {
-        Sentry.setTag('http_status', String(httpStatus));
-      }
-      Sentry.setContext('api_failure', {
+      console.warn('[api_failure] application-result', {
         api_host: apiHost,
-        endpoint: 'application-result',
         webtoken,
-        error_name: errorName,
         error_message: errorMessage,
         http_status: httpStatus ?? '(no response - e.g. CORS/network)',
-        page_origin: typeof window !== 'undefined' ? window.location.origin : '',
-        referrer: typeof document !== 'undefined' ? document.referrer || '(none)' : '(none)',
-        likely_cause: '"Load failed" = CORS not allowed from page origin, or network blocked. Fix: allow Origin (e.g. https://offers.loantube.com) on the API server.',
       });
       throw err;
     }
