@@ -900,21 +900,45 @@ export type AcceptOfferResponse = AcceptOfferSuccess | AcceptOfferError;
 
 // Application Result API Service
 export class ApplicationResultAPI {
-  // Fetch application result using webtoken/tag
-  static async getApplicationResult(webtoken: string): Promise<ApplicationResultResponse> {
-    // Construct API URL - use the base URL from config
+  // Fetch application result using webtoken/tag and/or applicationId + utm params (email/SMS)
+  static async getApplicationResult(
+    webtoken: string,
+    options?: { applicationId?: string; utm_source?: string; utm_medium?: string; utm_campaign?: string }
+  ): Promise<ApplicationResultResponse> {
     const baseUrl = API_CONFIG.LEADS_API_URL || `${BACKEND_BASE_URL}/api/leads`;
-    // Replace /api/leads with /api/leads/application-result
     const apiUrl = baseUrl.replace('/api/leads', '/api/leads/application-result');
-    
-    const url = `${apiUrl}?tag=${encodeURIComponent(webtoken)}`;
-    
-    console.log('📥 Fetching application result:', { 
-      baseUrl, 
-      apiUrl, 
-      url, 
-      webtoken,
-      fullUrl: url
+
+    const params = new URLSearchParams();
+    if (webtoken != null && String(webtoken).trim() !== '') {
+      params.set('tag', webtoken.trim());
+    }
+    if (options?.applicationId != null && String(options.applicationId).trim() !== '') {
+      params.set('applicationId', options.applicationId.trim());
+    }
+    if (options?.utm_source != null && String(options.utm_source).trim() !== '') {
+      params.set('utm_source', options.utm_source.trim());
+    }
+    if (options?.utm_medium != null && String(options.utm_medium).trim() !== '') {
+      params.set('utm_medium', options.utm_medium.trim());
+    }
+    if (options?.utm_campaign != null && String(options.utm_campaign).trim() !== '') {
+      params.set('utm_campaign', options.utm_campaign.trim());
+    }
+
+    const queryString = params.toString();
+    if (!queryString) {
+      throw new Error('Either tag (webtoken) or applicationId must be provided');
+    }
+    const url = `${apiUrl}?${queryString}`;
+
+    const effectiveTag = webtoken?.trim() || options?.applicationId || '(applicationId)';
+    console.log('📥 Fetching application result:', {
+      baseUrl,
+      apiUrl,
+      url,
+      webtoken: webtoken || '(empty)',
+      applicationId: options?.applicationId,
+      utm: options ? { source: options.utm_source, medium: options.utm_medium, campaign: options.utm_campaign } : undefined,
     });
 
     let httpStatus: number | null = null;
@@ -951,14 +975,14 @@ export class ApplicationResultAPI {
       Sentry.setTag('api_host', apiHost);
       Sentry.setTag('endpoint', 'application-result');
       Sentry.setTag('error_type', errorName);
-      Sentry.setTag('webtoken', webtoken);
+      Sentry.setTag('webtoken', effectiveTag);
       if (httpStatus != null) {
         Sentry.setTag('http_status', String(httpStatus));
       }
       Sentry.setContext('api_failure', {
         api_host: apiHost,
         endpoint: 'application-result',
-        webtoken,
+        webtoken: effectiveTag,
         error_name: errorName,
         error_message: errorMessage,
         http_status: httpStatus ?? '(no response - e.g. CORS/network)',
@@ -968,7 +992,7 @@ export class ApplicationResultAPI {
       });
       console.warn('[api_failure] application-result', {
         api_host: apiHost,
-        webtoken,
+        webtoken: effectiveTag,
         error_message: errorMessage,
         http_status: httpStatus ?? '(no response - e.g. CORS/network)',
       });

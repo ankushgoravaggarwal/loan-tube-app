@@ -10,6 +10,8 @@ const NotFound = lazy(() => import('./components/NotFound'));
 const OfferPage = lazy(() => import('./offer-page/OfferPage'));
 const OfferFlowRoutes = lazy(() => import('./offer-page/OfferFlowRoutes'));
 const CustomerLenderResult = lazy(() => import('./offer-page/CustomerLenderResult'));
+const ViewLoandetailsRedirect = lazy(() => import('./offer-page/ViewLoandetailsRedirect'));
+const SmsOfferRedirect = lazy(() => import('./offer-page/SmsOfferRedirect'));
 const TestApp = lazy(() => import('./components/TestApp'));
 
 // Optimized loading component
@@ -94,6 +96,18 @@ const CustomerLenderResultRoute = memo(() => (
   </Suspense>
 ));
 
+const ViewLoandetailsRedirectRoute = memo(() => (
+  <Suspense fallback={null}>
+    <ViewLoandetailsRedirect />
+  </Suspense>
+));
+
+const SmsOfferRedirectRoute = memo(() => (
+  <Suspense fallback={null}>
+    <SmsOfferRedirect />
+  </Suspense>
+));
+
 const TestAppRoute = memo(() => (
   <Suspense fallback={null}>
     <TestApp />
@@ -113,10 +127,12 @@ function App() {
             <Routes>
               <Route path="/customer/application-result" element={<OfferPageRoute />} />
               <Route path="/customer/lenderresult" element={<CustomerLenderResultRoute />} />
+              <Route path="/customer/viewloandetails" element={<ViewLoandetailsRedirectRoute />} />
               <Route path="/offerpage" element={<OfferPageRoute />} />
               <Route path="/lender-deeplink" element={<LenderDeeplinkRoute />} />
               <Route path="/lender-result" element={<LenderResultRoute />} />
               <Route path="/testapp" element={<TestAppRoute />} />
+              <Route path="/:applicationIdSms" element={<SmsOfferRedirectRoute />} />
               <Route path="/*" element={<AppContent />} />
             </Routes>
           </BrowserRouter>

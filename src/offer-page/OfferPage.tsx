@@ -72,17 +72,20 @@ const OfferPage: React.FC = () => {
   const MAX_OFFER_FETCH_ATTEMPTS = 5;
   const OFFER_FETCH_RETRY_DELAY_MS = 2000;
 
-  const fetchApplicationResult = useCallback(async (token: string) => {
+  const fetchApplicationResult = useCallback(async (token: string, options?: { applicationId?: string; utm_source?: string; utm_medium?: string; utm_campaign?: string }) => {
     setLoading(true);
     setError(null);
     let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= MAX_OFFER_FETCH_ATTEMPTS; attempt++) {
       try {
-        console.log(`🚀 Fetching application result (attempt ${attempt}/${MAX_OFFER_FETCH_ATTEMPTS}) with token:`, token);
-        const result = await ApplicationResultAPI.getApplicationResult(token);
+        console.log(`🚀 Fetching application result (attempt ${attempt}/${MAX_OFFER_FETCH_ATTEMPTS}) with token:`, token, options ? { applicationId: options.applicationId, utm: options } : '');
+        const result = await ApplicationResultAPI.getApplicationResult(token, options);
         console.log('✅ Application result fetched successfully:', result);
         setApplicationResult(result);
+        if (result?.tag) {
+          setWebtoken(result.tag);
+        }
         setLoading(false);
         return;
       } catch (err) {
@@ -195,29 +198,56 @@ const OfferPage: React.FC = () => {
     }
   }, [loading, applicationResult]);
 
-  // Extract webtoken from URL on mount - only run once
+  // Extract webtoken or applicationId + utm from URL on mount - only run once
   const hasFetchedRef = useRef(false);
   useEffect(() => {
     // Prevent re-fetching if we already have data
     if (hasFetchedRef.current && applicationResult) {
       return;
     }
-    
+
     const token = searchParams.get('webtoken');
-    console.log('🔍 Checking for webtoken in URL:', { 
-      searchParams: searchParams.toString(), 
+    const applicationId = searchParams.get('applicationId');
+    const utm_source = searchParams.get('utm_source');
+    const utm_medium = searchParams.get('utm_medium');
+    const utm_campaign = searchParams.get('utm_campaign');
+
+    console.log('🔍 Checking for webtoken or applicationId in URL:', {
+      searchParams: searchParams.toString(),
       token,
-      currentUrl: window.location.href 
+      applicationId,
+      utm_source,
+      utm_medium,
+      utm_campaign,
+      currentUrl: window.location.href,
     });
-    
-    if (token && !hasFetchedRef.current) {
+
+    const hasWebtoken = token != null && String(token).trim() !== '';
+    const hasApplicationId = applicationId != null && String(applicationId).trim() !== '';
+
+    if (hasWebtoken && !hasFetchedRef.current) {
       console.log('✅ Webtoken found, fetching application result:', token);
       hasFetchedRef.current = true;
-      setWebtoken(token);
-      fetchApplicationResult(token);
-    } else if (!token) {
-      console.warn('⚠️ No webtoken found in URL');
-      setError('No webtoken found in URL. Please submit the form first.');
+      setWebtoken(token!.trim());
+      fetchApplicationResult(token!.trim());
+      return;
+    }
+
+    if (hasApplicationId && !hasFetchedRef.current) {
+      console.log('✅ ApplicationId found (email/SMS), fetching application result:', applicationId);
+      hasFetchedRef.current = true;
+      fetchApplicationResult('', {
+        applicationId: applicationId!.trim(),
+        utm_source: utm_source ?? undefined,
+        utm_medium: utm_medium ?? undefined,
+        utm_campaign: utm_campaign ?? undefined,
+      });
+      return;
+    }
+
+    if (!hasWebtoken && !hasApplicationId) {
+      console.warn('⚠️ No webtoken or applicationId found in URL');
+      setError('No webtoken or applicationId found in URL. Please use the link from your email/SMS or submit the form first.');
       setLoading(false);
     }
   }, [searchParams, fetchApplicationResult, applicationResult]);
@@ -935,9 +965,22 @@ const OfferPage: React.FC = () => {
               <div className="offer-error">
                 <h2>Error Loading Offers</h2>
                 <p>{error}</p>
-                {webtoken && (
+                {(webtoken || searchParams.get('applicationId')) && (
                   <button 
-                    onClick={() => fetchApplicationResult(webtoken)}
+                    onClick={() => {
+                      const t = searchParams.get('webtoken');
+                      const aid = searchParams.get('applicationId');
+                      if (t?.trim()) {
+                        fetchApplicationResult(t.trim());
+                      } else if (aid?.trim()) {
+                        fetchApplicationResult('', {
+                          applicationId: aid.trim(),
+                          utm_source: searchParams.get('utm_source') ?? undefined,
+                          utm_medium: searchParams.get('utm_medium') ?? undefined,
+                          utm_campaign: searchParams.get('utm_campaign') ?? undefined,
+                        });
+                      }
+                    }}
                     className="retry-button"
                   >
                     Retry
