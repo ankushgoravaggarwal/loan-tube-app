@@ -4,16 +4,16 @@ import type { ReactNode } from 'react';
 
 /**
  * Redirect from SMS link URL to offer page.
- * URL: /{applicationId}:{smsnumber} e.g. /12345:447123456789
- * Redirects to: /customer/application-result?applicationId=12345&utm_source=Telesign&utm_medium=sms&utm_campaign=447123456789
- * If segment does not match \d+:\d+, redirect to home.
+ * URL: /{applicationId}:{smsnumber} e.g. /12345:447123456789 or /0XdakVHbo:2
+ * Redirects to: /customer/application-result?applicationId=...&utm_source=Telesign&utm_medium=sms&utm_campaign=...
+ * Pattern: one or more non-colon chars, then :, then one or more digits. If no match, redirect to home.
  */
 export default function SmsOfferRedirect({ fallback }: { fallback?: ReactNode }) {
   const { applicationIdSms } = useParams<{ applicationIdSms: string }>();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const match = applicationIdSms?.trim().match(/^(\d+):(\d+)$/);
+    const match = applicationIdSms?.trim().match(/^([^:]+):(\d+)$/);
     if (!match) {
       return;
     }
@@ -28,7 +28,7 @@ export default function SmsOfferRedirect({ fallback }: { fallback?: ReactNode })
     navigate(`/customer/application-result?${params.toString()}`, { replace: true });
   }, [applicationIdSms, navigate]);
 
-  const match = applicationIdSms?.trim().match(/^(\d+):(\d+)$/);
+  const match = applicationIdSms?.trim().match(/^([^:]+):(\d+)$/);
   if (!match) {
     return <>{fallback ?? <Navigate to="/" replace />}</>;
   }
