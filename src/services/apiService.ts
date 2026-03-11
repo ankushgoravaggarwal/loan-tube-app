@@ -2,8 +2,8 @@
 import { FormData } from '../types/FormTypes';
 import * as Sentry from '@sentry/react';
 
-// Backend base URL - used for leads and offer (application result) fetching. Production: sample.loantube.com
-const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'https://sample.loantube.com';
+// Backend base URL - used for leads and offer (application result) fetching. Production: api.loantube.com
+const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'https://api.loantube.com';
 //const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'http://18.170.21.73:8081';
 // Environment variables configuration
 const API_CONFIG = {

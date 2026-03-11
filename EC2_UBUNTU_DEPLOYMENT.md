@@ -124,8 +124,8 @@ VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 VITE_EMAIL_TOKEN_API_URL=https://www.emailvalidation.xyz/token.php
 VITE_EMAIL_VALIDATION_API_URL=https://www.emailvalidation.xyz/validate.php
 VITE_MASTER_OTP=0000
-VITE_LEADS_API_URL=https://sample.loantube.com/api/leads
-VITE_BACKEND_BASE_URL=https://sample.loantube.com
+VITE_LEADS_API_URL=https://api.loantube.com/api/leads
+VITE_BACKEND_BASE_URL=https://api.loantube.com
 ```
 
 Save and exit (Ctrl+X, then Y, then Enter)
