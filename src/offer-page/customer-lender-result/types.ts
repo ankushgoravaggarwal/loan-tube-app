@@ -33,6 +33,7 @@ export interface DecodedLenderData {
   totalPayable?: number;
   isEvloConnectRequired?: boolean;
   IsEvloConnectRequired?: boolean;
+  /** Backend includes in base64 d for evlo/selfy when Evlo Connect (Open Banking) is available. Not used for evolution/loanscouk. */
   evloConnectUrl?: string;
 }
 

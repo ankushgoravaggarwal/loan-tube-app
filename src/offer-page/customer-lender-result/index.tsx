@@ -40,7 +40,7 @@ const CustomerLenderResult: React.FC = () => {
     if (!decoded) return { view: null, variant: 'generic' as LenderVariant, error: 'Invalid link.' };
     const variant = getLenderVariant(decoded.lenderCode);
     const view = buildLenderResultView(decoded);
-    // For evlo/selfy: isEvloConnect comes from server only when evloConnectUrl (or isEvloConnectRequired) is set in accept-offer response. Do not override.
+    // evloConnectUrl comes from base64 d (backend includes it for evlo/selfy). buildLenderResultView sets isEvloConnect when evloConnectUrl is present.
     console.log('[CustomerLenderResult] index: variant', variant, 'view.hasAnyLoanFigures', view.hasAnyLoanFigures, 'view loan fields', {
       loanAmountNum: view.loanAmountNum,
       loanDurationNum: view.loanDurationNum,
