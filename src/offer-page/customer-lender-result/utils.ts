@@ -20,13 +20,53 @@ export function decodePayload(d: string): DecodedLenderData | null {
   }
 }
 
+/** Exact lenderCode values from API (matching is case-insensitive): EveryDayLoans, Evolutionmoney, SelfyLoans, loanscouk */
+/** Exact lender codes (matching is case-insensitive): EveryDayLoans, Evolutionmoney, SelfyLoans, loanscouk */
+/** Exact lender codes (matching is case-insensitive): EveryDayLoans, Evolutionmoney, SelfyLoans, loanscouk */
+/** Exact lenderCode values we support; matching is exact and case-insensitive (EveryDayLoans, Evolutionmoney, SelfyLoans, loanscouk). */
+/** Exact lenderCode values from API (matching is case-insensitive): EveryDayLoans, Evolutionmoney, SelfyLoans, loanscouk */
+/** Exact lender codes we support; matching is case-insensitive (EveryDayLoans, Evolutionmoney, SelfyLoans, loanscouk). */
+/** Exact lender codes we support; matching is case-insensitive (EveryDayLoans, Evolutionmoney, SelfyLoans, loanscouk). */
+const LENDER_CODES = {
+  evlo: 'everydayloans',
+  evolution: 'evolutionmoney',
+  selfy: 'selfyloans',
+  loanscouk: 'loanscouk',
+} as const;
+
 export function getLenderVariant(lenderCode: string | undefined): LenderVariant {
-  if (!lenderCode) return 'generic';
+  console.log('[CustomerLenderResult] getLenderVariant: raw lenderCode', JSON.stringify(lenderCode), 'type', typeof lenderCode);
+  if (!lenderCode) {
+    console.log('[CustomerLenderResult] getLenderVariant: no lenderCode, returning generic');
+    return 'generic';
+  }
   const code = lenderCode.toLowerCase().trim();
-  if (/evlo/.test(code)) return 'evlo';
-  if (/evolution/.test(code)) return 'evolution';
-  if (/selfy/.test(code)) return 'selfy';
-  if (/loans?co?uk|loans?\.co\.uk|loan\.co\.uk/.test(code) || (code.includes('loan') && (code.includes('co') || code.includes('uk')))) return 'loanscouk';
+  console.log('[CustomerLenderResult] getLenderVariant: normalized code', JSON.stringify(code), 'LENDER_CODES', LENDER_CODES);
+  if (code === LENDER_CODES.evlo) {
+    console.log('[CustomerLenderResult] getLenderVariant: matched evlo');
+    return 'evlo';
+  }
+  if (code === LENDER_CODES.evolution) {
+    console.log('[CustomerLenderResult] getLenderVariant: matched evolution');
+    return 'evolution';
+  }
+  if (code === LENDER_CODES.selfy) {
+    console.log('[CustomerLenderResult] getLenderVariant: matched selfy');
+    return 'selfy';
+  }
+  if (code === LENDER_CODES.loanscouk) {
+    console.log('[CustomerLenderResult] getLenderVariant: matched loanscouk');
+    return 'loanscouk';
+  }
+  console.log('[CustomerLenderResult] getLenderVariant: no match, returning generic', {
+    normalizedCode: code,
+    codeLength: code.length,
+    expectedEvlo: LENDER_CODES.evlo,
+    expectedEvolution: LENDER_CODES.evolution,
+    expectedSelfy: LENDER_CODES.selfy,
+    expectedLoanscouk: LENDER_CODES.loanscouk,
+    charCodes: [...code].map((c) => c.charCodeAt(0)),
+  });
   return 'generic';
 }
 

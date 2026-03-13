@@ -11,12 +11,21 @@ import '../../styles/CustomerLenderResult.css';
 export interface EvloResultProps {
   view: LenderResultView;
   onGoBack: () => void;
+  showConnect?: boolean;
+  onContinueToConnect?: () => void;
 }
 
-const EvloResult: React.FC<EvloResultProps> = ({ view, onGoBack }) => {
-  const [showEvloConnect, setShowEvloConnect] = useState(false);
+const EvloResult: React.FC<EvloResultProps> = ({ view, onGoBack, showConnect = false, onContinueToConnect }) => {
+  const [showEvloConnectLocal, setShowEvloConnectLocal] = useState(false);
+  const showConnectScreen = showConnect || showEvloConnectLocal;
 
-  if (showEvloConnect && view.evloConnectUrl) {
+  const handleContinue = () => {
+    setShowEvloConnectLocal(true);
+    onContinueToConnect?.();
+  };
+
+  if (showConnectScreen) {
+    const connectUrl = view.evloConnectUrl || 'https://evlo.co.uk';
     return (
       <div className="offer-page-container customer-lender-result-wrap">
         <OfferPageHeader />
@@ -62,7 +71,7 @@ const EvloResult: React.FC<EvloResultProps> = ({ view, onGoBack }) => {
 
             <div className="evlo-connect-cta-wrap">
               <a
-                href={view.evloConnectUrl}
+                href={connectUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="evlo-connect-cta-btn"
@@ -118,7 +127,7 @@ const EvloResult: React.FC<EvloResultProps> = ({ view, onGoBack }) => {
               <div className="customer-lender-result-submit-wrap">
                 <button
                   type="button"
-                  onClick={() => setShowEvloConnect(true)}
+                  onClick={handleContinue}
                   className="customer-lender-result-cta-btn"
                 >
                   <strong>Continue</strong>

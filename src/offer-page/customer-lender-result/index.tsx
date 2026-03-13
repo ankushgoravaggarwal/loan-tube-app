@@ -14,25 +14,26 @@ import SelfyResult from './SelfyResult';
 import GenericResult from './GenericResult';
 
 const CustomerLenderResult: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const evloConnectStep = searchParams.get('step') === 'connect';
 
   const { view, variant, error } = useMemo(() => {
-    const testEvlo = searchParams.get('test') === 'evlo';
-    if (testEvlo) {
-      return { view: getDummyEvloView(), variant: 'evlo' as LenderVariant, error: null };
-    }
-    const testSelfy = searchParams.get('test') === 'selfy';
-    if (testSelfy) {
-      return { view: getDummySelfyView(), variant: 'selfy' as LenderVariant, error: null };
-    }
-    const testEvolution = searchParams.get('test') === 'evolution';
-    if (testEvolution) {
-      return { view: getDummyEvolutionView(), variant: 'evolution' as LenderVariant, error: null };
-    }
-    const testLoansCoUk = searchParams.get('test') === 'loanscouk';
-    if (testLoansCoUk) {
-      return { view: getDummyLoansCoUkView(), variant: 'loanscouk' as LenderVariant, error: null };
-    }
+    // const testEvlo = searchParams.get('test') === 'evlo';
+    // if (testEvlo) {
+    //   return { view: getDummyEvloView(), variant: 'evlo' as LenderVariant, error: null };
+    // }
+    // const testSelfy = searchParams.get('test') === 'selfy';
+    // if (testSelfy) {
+    //   return { view: getDummySelfyView(), variant: 'selfy' as LenderVariant, error: null };
+    // }
+    // const testEvolution = searchParams.get('test') === 'evolution';
+    // if (testEvolution) {
+    //   return { view: getDummyEvolutionView(), variant: 'evolution' as LenderVariant, error: null };
+    // }
+    // const testLoansCoUk = searchParams.get('test') === 'loanscouk';
+    // if (testLoansCoUk) {
+    //   return { view: getDummyLoansCoUkView(), variant: 'loanscouk' as LenderVariant, error: null };
+    // }
     const d = searchParams.get('d');
     if (!d) return { view: null, variant: 'generic' as LenderVariant, error: 'Missing loan data.' };
     const decoded = decodePayload(d);
@@ -58,9 +59,21 @@ const CustomerLenderResult: React.FC = () => {
     return <ErrorView message={error ?? 'Unable to load your result.'} onGoBack={onGoBack} />;
   }
 
+  const onEvloContinueToConnect = () => {
+    const d = searchParams.get('d');
+    if (d) setSearchParams({ d, step: 'connect' });
+  };
+
   switch (variant) {
     case 'evlo':
-      return <EvloResult view={view} onGoBack={onGoBack} />;
+      return (
+        <EvloResult
+          view={view}
+          onGoBack={onGoBack}
+          showConnect={evloConnectStep}
+          onContinueToConnect={onEvloContinueToConnect}
+        />
+      );
     case 'evolution':
       return <EvolutionResult view={view} onGoBack={onGoBack} />;
     case 'loanscouk':
