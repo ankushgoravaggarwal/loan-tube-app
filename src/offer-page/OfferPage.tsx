@@ -276,8 +276,11 @@ const OfferPage: React.FC = () => {
   };
 
   const handleProceed = () => {
-    if (!webtoken) {
-      setAcceptOfferError('Tag is required. Please refresh the page and try again.');
+    const applicationIdFromUrl = searchParams.get('applicationId');
+    const hasTag = webtoken != null && String(webtoken).trim() !== '';
+    const hasApplicationId = applicationIdFromUrl != null && String(applicationIdFromUrl).trim() !== '';
+    if (!hasTag && !hasApplicationId) {
+      setAcceptOfferError('Tag or application ID is required. Please refresh the page and try again.');
       return;
     }
     if (!selectedOfferId || !applicationResult) return;
@@ -300,7 +303,8 @@ const OfferPage: React.FC = () => {
     const loanDetails = buildLoanDetailsFromOffer(selectedOffer);
     navigate('/lender-deeplink', {
       state: {
-        webtoken,
+        webtoken: webtoken ?? undefined,
+        applicationId: hasApplicationId ? applicationIdFromUrl!.trim() : undefined,
         offerId: parseInt(selectedOfferId, 10),
         lenderName: selectedOffer.CompanyName,
         lenderLogo: listingLogoPath || undefined,

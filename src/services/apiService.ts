@@ -1046,13 +1046,22 @@ export class ApplicationResultAPI {
     return { applicationResult };
   }
 
-  /** Accept an offer: POST /api/leads/accept-offer?tag=...&offerId=... */
-  static async acceptOffer(webtoken: string, offerId: number): Promise<AcceptOfferResponse> {
+  /** Accept an offer: POST /api/leads/accept-offer?tag=...&offerId=... or with applicationId when tag is empty (email/SMS) */
+  static async acceptOffer(webtoken: string, offerId: number, applicationId?: string): Promise<AcceptOfferResponse> {
     const baseUrl = API_CONFIG.LEADS_API_URL || `${BACKEND_BASE_URL}/api/leads`;
     const apiUrl = baseUrl.replace(/\/api\/leads\/?$/, '/api/leads/accept-offer');
-    const url = `${apiUrl}?tag=${encodeURIComponent(webtoken)}&offerId=${offerId}`;
 
-    console.log('📤 Accepting offer:', { webtoken, offerId, url });
+    const params = new URLSearchParams();
+    if (webtoken != null && String(webtoken).trim() !== '') {
+      params.set('tag', webtoken.trim());
+    }
+    params.set('offerId', String(offerId));
+    if (applicationId != null && String(applicationId).trim() !== '') {
+      params.set('applicationId', applicationId.trim());
+    }
+    const url = `${apiUrl}?${params.toString()}`;
+
+    console.log('📤 Accepting offer:', { webtoken: webtoken || '(empty)', applicationId, offerId, url });
 
     const response = await baseFetch(url, {
       method: 'POST',

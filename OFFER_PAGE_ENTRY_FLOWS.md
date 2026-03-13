@@ -89,6 +89,12 @@ The offers API supports optional query params:
 - **applicationId** – used for email/SMS when no tag.
 - **utm_source**, **utm_medium**, **utm_campaign** – passed through for attribution.
 
+**Accept offer** (`POST /api/leads/accept-offer`):
+
+- **offerId** – required.
+- **tag** – sent when webtoken is present (direct flow).
+- **applicationId** – sent when tag is null/empty (email/SMS flow) so the backend can identify the application; always sent alongside offerId on accept.
+
 Examples:
 
 - Direct: `GET /api/leads/application-result?tag=xyz123`
@@ -99,10 +105,9 @@ Examples:
 
 ## After the first load
 
-- **Modify loan amount/term** and **Accept offer** always use the **webtoken** (tag):
-  - Direct: from the URL.
-  - Email/SMS: from **`result.tag`** after the first successful application-result call.
-- No difference in behaviour between the three entry types after offers are loaded.
+- **Modify loan amount/term** uses the **webtoken** (tag) when present; email/SMS may get it from **`result.tag`** after the first successful application-result call.
+- **Accept offer**: when the user came via email/SMS, **tag** may be null or empty. In that case the app sends **applicationId** (from the URL) along with **offerId** so the backend can identify the application. When tag is present (direct flow), it sends tag + offerId as before.
+- No other behavioural difference between the three entry types after offers are loaded.
 
 ---
 

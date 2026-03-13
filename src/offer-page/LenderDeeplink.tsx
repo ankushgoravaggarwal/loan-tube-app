@@ -12,6 +12,8 @@ import '../styles/LenderDeeplinkResult.css';
 export interface LenderDeeplinkState {
   /** From Proceed: call accept-offer API then redirect/navigate */
   webtoken?: string;
+  /** When user landed via email/SMS and tag may be empty, pass applicationId for accept-offer */
+  applicationId?: string;
   offerId?: number;
   lenderName?: string;
   lenderLogo?: string;
@@ -46,13 +48,14 @@ const LenderDeeplink: React.FC = () => {
   const state = (location.state ?? null) as LenderDeeplinkState | null;
 
   const webtoken = state?.webtoken;
+  const applicationId = state?.applicationId;
   const offerId = state?.offerId;
   const acceptUrl = state?.acceptUrl;
   const lenderName = state?.lenderName ?? 'the lender';
   const lenderLogo = state?.lenderLogo ?? null;
   const loanDetails = state?.loanDetails;
 
-  const isApiMode = typeof webtoken === 'string' && typeof offerId === 'number';
+  const isApiMode = typeof offerId === 'number' && (typeof webtoken === 'string' || (typeof applicationId === 'string' && applicationId.trim() !== ''));
 
   const [apiError, setApiError] = useState<string | null>(null);
   const [redirectUrlFromApi, setRedirectUrlFromApi] = useState<string | null>(null);
@@ -68,7 +71,11 @@ const LenderDeeplink: React.FC = () => {
     let cancelled = false;
     (async () => {
       try {
-        const res: AcceptOfferResponse = await ApplicationResultAPI.acceptOffer(webtoken!, offerId!);
+        const res: AcceptOfferResponse = await ApplicationResultAPI.acceptOffer(
+          webtoken ?? '',
+          offerId!,
+          applicationId
+        );
         if (cancelled) return;
 
         if (res.status === 'error') {
@@ -102,7 +109,7 @@ const LenderDeeplink: React.FC = () => {
       }
     })();
     return () => { cancelled = true; };
-  }, [isApiMode, webtoken, offerId, navigate]);
+  }, [isApiMode, webtoken, applicationId, offerId, navigate]);
 
   // Countdown: run when showing countdown UI (legacy acceptUrl/direct visit, or after API returned lenderAcceptanceUrl)
   const showCountdown = !isApiMode || redirectUrlFromApi != null;
