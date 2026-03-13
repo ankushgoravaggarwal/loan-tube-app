@@ -24,8 +24,7 @@ const EvloResult: React.FC<EvloResultProps> = ({ view, onGoBack, showConnect = f
     onContinueToConnect?.();
   };
 
-  if (showConnectScreen) {
-    const connectUrl = view.evloConnectUrl || 'https://evlo.co.uk';
+  if (showConnectScreen && view.evloConnectUrl) {
     return (
       <div className="offer-page-container customer-lender-result-wrap">
         <OfferPageHeader />
@@ -71,7 +70,7 @@ const EvloResult: React.FC<EvloResultProps> = ({ view, onGoBack, showConnect = f
 
             <div className="evlo-connect-cta-wrap">
               <a
-                href={connectUrl}
+                href={view.evloConnectUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="evlo-connect-cta-btn"

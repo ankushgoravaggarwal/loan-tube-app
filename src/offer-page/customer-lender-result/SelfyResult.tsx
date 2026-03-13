@@ -11,12 +11,20 @@ import '../../styles/CustomerLenderResult.css';
 export interface SelfyResultProps {
   view: LenderResultView;
   onGoBack: () => void;
+  showConnect?: boolean;
+  onContinueToConnect?: () => void;
 }
 
-const SelfyResult: React.FC<SelfyResultProps> = ({ view, onGoBack }) => {
-  const [showEvloConnect, setShowEvloConnect] = useState(false);
+const SelfyResult: React.FC<SelfyResultProps> = ({ view, onGoBack, showConnect = false, onContinueToConnect }) => {
+  const [showEvloConnectLocal, setShowEvloConnectLocal] = useState(false);
+  const showConnectScreen = showConnect || showEvloConnectLocal;
 
-  if (showEvloConnect && view.evloConnectUrl) {
+  const handleContinue = () => {
+    setShowEvloConnectLocal(true);
+    onContinueToConnect?.();
+  };
+
+  if (showConnectScreen && view.evloConnectUrl) {
     return (
       <div className="offer-page-container customer-lender-result-wrap">
         <OfferPageHeader />
@@ -120,7 +128,7 @@ const SelfyResult: React.FC<SelfyResultProps> = ({ view, onGoBack }) => {
               <div className="customer-lender-result-submit-wrap">
                 <button
                   type="button"
-                  onClick={() => setShowEvloConnect(true)}
+                  onClick={handleContinue}
                   className="customer-lender-result-cta-btn"
                 >
                   <strong>Continue</strong>
