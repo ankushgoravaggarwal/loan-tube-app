@@ -55,13 +55,14 @@ The offer page (`/customer/application-result`) can be reached in three ways. Al
 **Typical URL:**  
 `https://offers.loantube.com/12345:447123456789`  
 or `https://offers.loantube.com/0XdakVHbo:2`  
-(i.e. **base URL** + **`{applicationId}:{smsnumber}`** as a single path segment; applicationId can be digits or alphanumeric)
+or `https://offers.loantube.com/abc123:xyz789`  
+(i.e. **base URL** + **`{applicationId}:{smsnumber}`** as a single path segment; both parts can be alphanumeric)
 
 **Who uses it:** SMS from LoanTube (e.g. Telesign) with a link in the message.
 
 **Flow:**
 1. User clicks the link and lands on **`/{applicationId}:{smsnumber}`** (e.g. `/12345:447123456789`).
-2. **SmsOfferRedirect** runs (only when the path is a single segment matching `something:digits`, e.g. `0XdakVHbo:2` or `12345:447123456789`):
+2. **SmsOfferRedirect** runs (only when the path is a single segment matching `{applicationId}:{smsnumber}`, both alphanumeric, e.g. `0XdakVHbo:2`, `12345:447123456789`, `abc123:xyz789`):
    - Splits into `applicationId` and `smsnumber`.
    - Redirects to:  
      `/customer/application-result?applicationId=12345&utm_source=Telesign&utm_medium=sms&utm_campaign=447123456789`  
@@ -73,7 +74,7 @@ or `https://offers.loantube.com/0XdakVHbo:2`
    - Sends **webtoken as empty**; backend uses `applicationId` + UTM.
 4. Response includes offers and `tag`; app stores `tag` as webtoken for Modify / Accept.
 
-**Required:** Path must be exactly one segment of the form **`{applicationId}:{smsnumber}`** where applicationId is one or more non-colon characters and smsnumber is digits (e.g. `0XdakVHbo:2`, `12345:447123456789`). Any other single-segment path (e.g. `/customer`) redirects to `/`.
+**Required:** Path must be exactly one segment of the form **`{applicationId}:{smsnumber}`** where both parts are one or more non-colon characters (alphanumeric), e.g. `0XdakVHbo:2`, `12345:447123456789`, `abc123:xyz789`. Any other single-segment path (e.g. `/customer`) redirects to `/`.
 
 **Code:**  
 - Route: `App.tsx` → `/:applicationIdSms` → `SmsOfferRedirect`.  
