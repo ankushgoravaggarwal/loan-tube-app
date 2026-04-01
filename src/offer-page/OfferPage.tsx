@@ -18,10 +18,10 @@ function formatAcceptanceCertainty(text: string | undefined): string {
 
 /**
  * Pre-approved badges and copy were hard-coded for all offers. Gate until we have a real rule
- * (e.g. per-offer flag from application-result API). Deliberately never true for now — flip to
- * a proper condition when product/API is ready.
+ * (e.g. per-offer flag from application-result API). Set to false until wired; then replace with
+ * a real condition from product/API.
  */
-const SHOW_PRE_APPROVED_MESSAGING = 1 === 2;
+const SHOW_PRE_APPROVED_MESSAGING = false;
 
 function buildLoanDetailsFromOffer(offer: Offer): LenderResultLoanDetails {
   const fmt = (n: number, style: 'currency' | 'percent' = 'currency') =>
