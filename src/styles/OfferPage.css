@@ -1325,6 +1325,76 @@
   color: #6b7280;
 }
 
+/* Dev/staging: collapsible tag reference for support (see VITE_SHOW_OFFER_SUPPORT_REFERENCE) */
+.offer-support-reference {
+  margin-top: 1.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px dashed #cbd5e1;
+  border-radius: 0.5rem;
+  background: #f8fafc;
+  font-size: 0.8125rem;
+  color: #475569;
+}
+
+.offer-error .offer-support-reference {
+  margin-top: 1rem;
+}
+
+.offer-support-reference-summary {
+  cursor: pointer;
+  font-weight: 500;
+  color: #64748b;
+  user-select: none;
+}
+
+.offer-support-reference-summary:hover {
+  color: #334155;
+}
+
+.offer-support-reference-body {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.offer-support-reference-row {
+  margin: 0 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.offer-support-reference-row:last-of-type {
+  margin-bottom: 0;
+}
+
+.offer-support-reference-label {
+  display: block;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+}
+
+.offer-support-reference-code {
+  display: block;
+  padding: 0.35rem 0.5rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  font-family: ui-monospace, monospace;
+  font-size: 0.75rem;
+  word-break: break-all;
+  color: #0f172a;
+}
+
+.offer-support-reference-note {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
 .modal-footer {
   padding: 1rem 2rem 1.5rem;
   display: flex;

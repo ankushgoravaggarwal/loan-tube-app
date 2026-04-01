@@ -23,6 +23,74 @@ function formatAcceptanceCertainty(text: string | undefined): string {
  */
 const SHOW_PRE_APPROVED_MESSAGING = false;
 
+/** Shown in dev or when VITE_SHOW_OFFER_SUPPORT_REFERENCE=true (e.g. staging). Not for public prod. */
+const SHOW_OFFER_SUPPORT_REFERENCE =
+  import.meta.env.DEV || import.meta.env.VITE_SHOW_OFFER_SUPPORT_REFERENCE === 'true';
+
+function OfferSupportReferencePanel(props: {
+  webtoken: string | null;
+  urlWebtoken: string | null;
+  applicationIdFromUrl: string | null;
+  responseTag: string | null | undefined;
+}) {
+  const urlTag = props.urlWebtoken?.trim() || '';
+  const stateTag = props.webtoken?.trim() || '';
+  const tagForRequests = stateTag || urlTag;
+  const appId = props.applicationIdFromUrl?.trim() || '';
+  const apiTag = props.responseTag?.trim() || '';
+
+  if (!tagForRequests && !appId && !apiTag) {
+    return null;
+  }
+
+  const tagsMatch = urlTag !== '' && stateTag !== '' && urlTag === stateTag;
+
+  return (
+    <details className="offer-support-reference">
+      <summary className="offer-support-reference-summary">
+        Support reference — expand and copy if LoanTube asks for your tag / IDs
+      </summary>
+      <div className="offer-support-reference-body">
+        {tagsMatch ? (
+          <p className="offer-support-reference-row">
+            <span className="offer-support-reference-label">Tag (URL and in use)</span>
+            <code className="offer-support-reference-code">{urlTag}</code>
+          </p>
+        ) : (
+          <>
+            {urlTag ? (
+              <p className="offer-support-reference-row">
+                <span className="offer-support-reference-label">Tag (from page URL)</span>
+                <code className="offer-support-reference-code">{urlTag}</code>
+              </p>
+            ) : null}
+            {stateTag && stateTag !== urlTag ? (
+              <p className="offer-support-reference-row">
+                <span className="offer-support-reference-label">Tag (in use after load)</span>
+                <code className="offer-support-reference-code">{stateTag}</code>
+              </p>
+            ) : null}
+          </>
+        )}
+        {appId ? (
+          <p className="offer-support-reference-row">
+            <span className="offer-support-reference-label">Application ID (URL)</span>
+            <code className="offer-support-reference-code">{appId}</code>
+          </p>
+        ) : null}
+        {apiTag ? (
+          <p className="offer-support-reference-row">
+            <span className="offer-support-reference-label">Tag (application-result response)</span>
+            <code className="offer-support-reference-code">{apiTag}</code>
+          </p>
+        ) : (
+          <p className="offer-support-reference-note">No successful application-result yet — response tag appears after offers load.</p>
+        )}
+      </div>
+    </details>
+  );
+}
+
 function buildLoanDetailsFromOffer(offer: Offer): LenderResultLoanDetails {
   const fmt = (n: number, style: 'currency' | 'percent' = 'currency') =>
     style === 'currency' ? `£${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : `${n.toFixed(2)}%`;
@@ -1013,6 +1081,14 @@ const OfferPage: React.FC = () => {
                     Retry
                   </button>
                 )}
+                {SHOW_OFFER_SUPPORT_REFERENCE ? (
+                  <OfferSupportReferencePanel
+                    webtoken={webtoken}
+                    urlWebtoken={searchParams.get('webtoken')}
+                    applicationIdFromUrl={searchParams.get('applicationId')}
+                    responseTag={applicationResult?.tag}
+                  />
+                ) : null}
               </div>
             )}
 
@@ -1152,6 +1228,15 @@ const OfferPage: React.FC = () => {
                 ) : null}
               </div>
             </section>
+
+            {SHOW_OFFER_SUPPORT_REFERENCE && !error ? (
+              <OfferSupportReferencePanel
+                webtoken={webtoken}
+                urlWebtoken={searchParams.get('webtoken')}
+                applicationIdFromUrl={searchParams.get('applicationId')}
+                responseTag={applicationResult?.tag}
+              />
+            ) : null}
           </main>
         </div>
       </div>
