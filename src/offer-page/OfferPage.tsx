@@ -16,6 +16,13 @@ function formatAcceptanceCertainty(text: string | undefined): string {
   return v === '100' ? '100' : 'Not applicable';
 }
 
+/**
+ * Pre-approved badges and copy were hard-coded for all offers. Gate until we have a real rule
+ * (e.g. per-offer flag from application-result API). Deliberately never true for now — flip to
+ * a proper condition when product/API is ready.
+ */
+const SHOW_PRE_APPROVED_MESSAGING = 1 === 2;
+
 function buildLoanDetailsFromOffer(offer: Offer): LenderResultLoanDetails {
   const fmt = (n: number, style: 'currency' | 'percent' = 'currency') =>
     style === 'currency' ? `£${n.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : `${n.toFixed(2)}%`;
@@ -438,12 +445,14 @@ const OfferPage: React.FC = () => {
           <h3 className="loan-card-title">
             {formatCurrency(offer.LoanAmount)} for {offer.LoanDuration} {offer.LoanDuration === 1 ? 'month' : 'months'}
           </h3>
-          <div className="loan-card-badge">
-            <span className="pre-approved-text">Pre-approved</span>
-            <div className="star-icon">
-              <Star fill="currentColor"/>
+          {SHOW_PRE_APPROVED_MESSAGING ? (
+            <div className="loan-card-badge">
+              <span className="pre-approved-text">Pre-approved</span>
+              <div className="star-icon">
+                <Star fill="currentColor"/>
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
         
         {/* Mobile Layout */}
@@ -686,7 +695,9 @@ const OfferPage: React.FC = () => {
     return (
       <div key={product.id} className="credit-product-card">
         <div className="credit-product-header">
-          <h3 className="credit-product-title">Pre-Approved Loan {product.creditLimit} Credit Limit</h3>
+          <h3 className="credit-product-title">
+            {SHOW_PRE_APPROVED_MESSAGING ? 'Pre-Approved Loan' : 'Loan'} {product.creditLimit} Credit Limit
+          </h3>
         </div>
         
         <div className="credit-product-main">
@@ -720,7 +731,9 @@ const OfferPage: React.FC = () => {
 
         <div className="credit-product-message-section">
           <p className="credit-product-message-text">
-            This flexible credit limit is pre-approved for you, which means you can withdraw it to your bank account straight away. This credit limit is subject to final checks by the lender.
+            {SHOW_PRE_APPROVED_MESSAGING
+              ? 'This flexible credit limit is pre-approved for you, which means you can withdraw it to your bank account straight away. This credit limit is subject to final checks by the lender.'
+              : 'This flexible credit limit is subject to final checks by the lender.'}
           </p>
         </div>
 
@@ -749,12 +762,14 @@ const OfferPage: React.FC = () => {
           </div>
           
           <div className="credit-product-details-column">
-            <div className="credit-product-detail-item">
-              <span className="credit-product-detail-label">Pre-Approved</span>
-              <span className="credit-product-detail-value">
-                {product.preApproved ? 'Yes, subject to final checks' : 'No'}
-              </span>
-            </div>
+            {SHOW_PRE_APPROVED_MESSAGING ? (
+              <div className="credit-product-detail-item">
+                <span className="credit-product-detail-label">Pre-Approved</span>
+                <span className="credit-product-detail-value">
+                  {product.preApproved ? 'Yes, subject to final checks' : 'No'}
+                </span>
+              </div>
+            ) : null}
             <div className="credit-product-detail-item">
               <span className="credit-product-detail-label">APR Rate</span>
               <span className="credit-product-detail-value">
@@ -813,19 +828,23 @@ const OfferPage: React.FC = () => {
     return (
       <div key={product.id} className="test-product-card">
         <div className="loan-card-header">
-          <h3 className="loan-card-title">Pre-Approved Loan {product.creditLimit} Credit Limit</h3>
-          <div className="loan-card-badge">
-            <span className="pre-approved-text">Pre-approved</span>
-            <div className="test-star-icon">
-              <img 
-                src="/assets/star-loan-card.svg" 
-                alt="Star" 
-                className="star-loan-card-icon"
-                loading="lazy"
-                decoding="async"
-              />
+          <h3 className="loan-card-title">
+            {SHOW_PRE_APPROVED_MESSAGING ? 'Pre-Approved Loan' : 'Loan'} {product.creditLimit} Credit Limit
+          </h3>
+          {SHOW_PRE_APPROVED_MESSAGING ? (
+            <div className="loan-card-badge">
+              <span className="pre-approved-text">Pre-approved</span>
+              <div className="test-star-icon">
+                <img 
+                  src="/assets/star-loan-card.svg" 
+                  alt="Star" 
+                  className="star-loan-card-icon"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
         
         <div className="test-product-main">
@@ -878,7 +897,9 @@ const OfferPage: React.FC = () => {
 
         <div className="test-product-representative-example desktop-full-width">
           <p>
-            This flexible credit limit is pre-approved for you, which means you can withdraw it to your bank account straight away. This credit limit is subject to final checks by the lender.
+            {SHOW_PRE_APPROVED_MESSAGING
+              ? 'This flexible credit limit is pre-approved for you, which means you can withdraw it to your bank account straight away. This credit limit is subject to final checks by the lender.'
+              : 'This flexible credit limit is subject to final checks by the lender.'}
           </p>
         </div>
 
@@ -891,12 +912,14 @@ const OfferPage: React.FC = () => {
           </div>
           
           <div className="test-product-details-column">
-            <div className="test-product-detail-item">
-              <span className="test-product-detail-label">Pre-Approved</span>
-              <span className="test-product-detail-value">
-                {product.preApproved ? 'Yes, subject to final checks' : 'No'}
-              </span>
-            </div>
+            {SHOW_PRE_APPROVED_MESSAGING ? (
+              <div className="test-product-detail-item">
+                <span className="test-product-detail-label">Pre-Approved</span>
+                <span className="test-product-detail-value">
+                  {product.preApproved ? 'Yes, subject to final checks' : 'No'}
+                </span>
+              </div>
+            ) : null}
             <div className="test-product-detail-item">
               <span className="test-product-detail-label">APR Rate</span>
               <span className="test-product-detail-value">
@@ -1119,10 +1142,14 @@ const OfferPage: React.FC = () => {
                   Acceptance certainty is a score which our lenders provide us for your loan application. It shows the likelihood of you being accepted by a lender based on a soft credit search on you and processing of visible information you provided us in your loan application. However, the displayed loan offers are still subject to affordability, fraud, anti-money laundering and other final verification checks.
                 </p>
 
-                <h3 className="offer-info-subtitle">Pre-Approved Loan</h3>
-                <p>
-                  This loan is pre-approved for you, which means you'll get this loan if all the details you've given us are correct and you pass additional checks of the lenders.
-                </p>
+                {SHOW_PRE_APPROVED_MESSAGING ? (
+                  <>
+                    <h3 className="offer-info-subtitle">Pre-Approved Loan</h3>
+                    <p>
+                      This loan is pre-approved for you, which means you&apos;ll get this loan if all the details you&apos;ve given us are correct and you pass additional checks of the lenders.
+                    </p>
+                  </>
+                ) : null}
               </div>
             </section>
           </main>

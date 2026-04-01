@@ -1277,6 +1277,54 @@
   padding-right: 2.5rem;
 }
 
+/* Modify search: £ fixed outside input; plain integer pounds only inside */
+.modify-loan-amount-field {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modify-loan-amount-field:focus-within {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.modify-loan-amount-currency {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 0 0.75rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  user-select: none;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.modify-loan-amount-input {
+  flex: 1;
+  min-width: 0;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-left: 0.35rem;
+}
+
+.modify-loan-amount-input:focus {
+  outline: none;
+  box-shadow: none !important;
+}
+
+.modify-loan-amount-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
 .modal-footer {
   padding: 1rem 2rem 1.5rem;
   display: flex;

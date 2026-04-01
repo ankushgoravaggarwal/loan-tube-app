@@ -70,6 +70,19 @@ export const InfoModal: React.FC<InfoModalProps> = ({ activeInfoModal, closeInfo
   );
 };
 
+/** Plain whole pounds only: no decimals, commas, or leading zeros; £ is separate in the UI. */
+function normalizePlainPoundsInput(raw: string): string {
+  const noExponent = raw.split(/[eE]/)[0] ?? '';
+  const integerPart = noExponent.split('.')[0] ?? '';
+  const digitsOnly = integerPart.replace(/\D/g, '');
+  return digitsOnly.replace(/^0+/, '');
+}
+
+function initialLoanAmountDigits(amount: number): string {
+  const n = Math.max(0, Math.floor(Number(amount)));
+  return n === 0 ? '' : String(n);
+}
+
 interface ModifySearchModalProps {
   isModifyModalOpen: boolean;
   setIsModifyModalOpen: (isOpen: boolean) => void;
@@ -87,7 +100,7 @@ export const ModifySearchModal: React.FC<ModifySearchModalProps> = ({
   currentLoanDuration,
   onUpdate
 }) => {
-  const [loanAmount, setLoanAmount] = React.useState<string>(`£ ${currentLoanAmount.toLocaleString()}`);
+  const [loanAmountDigits, setLoanAmountDigits] = React.useState<string>(initialLoanAmountDigits(currentLoanAmount));
   const [loanTerm, setLoanTerm] = React.useState<string>(currentLoanDuration.toString());
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -95,7 +108,7 @@ export const ModifySearchModal: React.FC<ModifySearchModalProps> = ({
   // Reset form when modal opens/closes or current values change
   React.useEffect(() => {
     if (isModifyModalOpen) {
-      setLoanAmount(`£ ${currentLoanAmount.toLocaleString()}`);
+      setLoanAmountDigits(initialLoanAmountDigits(currentLoanAmount));
       setLoanTerm(currentLoanDuration.toString());
       setError(null);
     }
@@ -109,11 +122,9 @@ export const ModifySearchModal: React.FC<ModifySearchModalProps> = ({
       return;
     }
 
-    // Parse loan amount (remove £ and commas)
-    const amountStr = loanAmount.replace(/£|,/g, '').trim();
-    const parsedAmount = parseFloat(amountStr);
-    
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+    const parsedAmount = parseInt(loanAmountDigits, 10);
+
+    if (loanAmountDigits === '' || Number.isNaN(parsedAmount) || parsedAmount <= 0) {
       setError('Please enter a valid loan amount.');
       return;
     }
@@ -168,17 +179,29 @@ export const ModifySearchModal: React.FC<ModifySearchModalProps> = ({
             )}
             
             <div className="form-group">
-              <label htmlFor="loanAmount">Loan Amount</label>
-              <input 
-                type="text" 
-                id="loanAmount" 
-                placeholder="£ 2500" 
-                value={loanAmount}
-                onChange={(e) => setLoanAmount(e.target.value)}
-                className="form-input"
-                disabled={isSubmitting}
-                required
-              />
+              <label htmlFor="loanAmount">Loan amount</label>
+              <div className="modify-loan-amount-field">
+                <span className="modify-loan-amount-currency" aria-hidden="true">
+                  £
+                </span>
+                <input
+                  type="text"
+                  id="loanAmount"
+                  className="form-input modify-loan-amount-input"
+                  placeholder="2500"
+                  inputMode="numeric"
+                  autoComplete="off"
+                  name="loanAmountPounds"
+                  value={loanAmountDigits}
+                  onChange={(e) => setLoanAmountDigits(normalizePlainPoundsInput(e.target.value))}
+                  disabled={isSubmitting}
+                  aria-describedby="loanAmount-hint"
+                  required
+                />
+              </div>
+              <p id="loanAmount-hint" className="modify-loan-amount-hint">
+                Whole pounds only, no pence.
+              </p>
             </div>
             
             <div className="form-group">
