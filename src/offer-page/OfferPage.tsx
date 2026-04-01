@@ -23,9 +23,9 @@ function formatAcceptanceCertainty(text: string | undefined): string {
  */
 const SHOW_PRE_APPROVED_MESSAGING = false;
 
-/** Shown in dev or when VITE_SHOW_OFFER_SUPPORT_REFERENCE=true (e.g. staging). Not for public prod. */
+/** On by default (incl. production). Set VITE_SHOW_OFFER_SUPPORT_REFERENCE=false at build time to hide. */
 const SHOW_OFFER_SUPPORT_REFERENCE =
-  import.meta.env.DEV || import.meta.env.VITE_SHOW_OFFER_SUPPORT_REFERENCE === 'true';
+  import.meta.env.VITE_SHOW_OFFER_SUPPORT_REFERENCE !== 'false';
 
 function OfferSupportReferencePanel(props: {
   webtoken: string | null;
