@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { allowManualScroll } from '../keyboard/IOSKeyboardManager';
 import { usePartner } from '../../partner/PartnerContext';
-import { useRecaptcha } from '../RecaptchaProvider';
 import { scrollToFormPosition } from '../../utils/scrollUtils';
 import { useFormEmailValidation } from '../../utils/emailValidation';
 import { generateButtonIds } from '../../utils/buttonIdGenerator';
@@ -40,11 +39,6 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({
   const buttonIds = useMemo(() => {
     return generateButtonIds(2, currentScreen, formData);
   }, [currentScreen, formData]);
-  
-  // Access reCAPTCHA context
-  const { 
-    executeRecaptchaV3
-  } = useRecaptcha();
   
   // Consolidate all partner-related styles into a single useMemo
   const partnerStyles = useMemo(() => {
@@ -132,9 +126,6 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({
     formData.emailValidation
   );
   
-  // State to track if phone score evaluation is complete
-  const [phoneScoreEvaluated, setPhoneScoreEvaluated] = useState(false);
-  
   // Add scroll effect for screen changes
   useEffect(() => {
     // Trigger scroll positioning when screen changes
@@ -171,28 +162,6 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({
       }, 50);
     }
   }, [currentScreen, formData.isPhoneVerified, nextStep, prevStep]);
-
-  // Effect to trigger phone score evaluation when phone number is complete
-  useEffect(() => {
-    const mobile = formData.mobile || '';
-    const isValidMobile = mobile.length === 11 && mobile.startsWith('07');
-    
-    // Trigger reCAPTCHA scoring as soon as valid phone number is entered
-    if (currentScreen === 5 && isValidMobile && !phoneScoreEvaluated) {
-      executeRecaptchaV3('mobile_number_screen')
-        .then(() => {
-          setPhoneScoreEvaluated(true);
-        })
-        .catch(() => {
-          setPhoneScoreEvaluated(true); // Continue anyway
-        });
-    }
-    
-    // Reset flag when leaving mobile screen or phone number changes
-    if (currentScreen !== 5 || !isValidMobile) {
-      setPhoneScoreEvaluated(false);
-    }
-  }, [currentScreen, formData.mobile, executeRecaptchaV3, phoneScoreEvaluated]);
 
   // Render the appropriate screen based on the current screen number
   const renderScreen = () => {

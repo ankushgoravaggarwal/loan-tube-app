@@ -1,7 +1,4 @@
-import React, { useCallback } from 'react';
-import { useRecaptcha } from '../../RecaptchaProvider';
-import RecaptchaV2Screen from '../RecaptchaV2Screen';
-import OTPVerification from './OTPVerification';
+import React, { useLayoutEffect, type Dispatch, type SetStateAction } from 'react';
 import { FormData } from '../../../types/FormTypes';
 
 interface VerificationScreenProps {
@@ -11,88 +8,33 @@ interface VerificationScreenProps {
   prevStep: () => void;
 }
 
+/**
+ * SMS OTP and reCAPTCHA v2 before verification are temporarily disabled.
+ * Marks mobile as verified; PersonalDetails effect then calls nextStep from screen 6 when appropriate.
+ */
 const VerificationScreen: React.FC<VerificationScreenProps> = ({
   formData,
   setFormData,
-  nextStep,
-  prevStep
+  nextStep: _nextStep,
+  prevStep: _prevStep,
 }) => {
-  // Access reCAPTCHA context
-  const { 
-    shouldShowRecaptchaV2, 
-    markScreenPassed, 
-    setRecaptchaV2Passed, 
-    setShowRecaptchaV2
-  } = useRecaptcha();
+  void _nextStep;
+  void _prevStep;
 
-  // Separate OTP wrapper to prevent instantiation when v2 is showing
-  const OTPWrapper = useCallback(({ phoneNumber, formData, setFormData, nextStep, prevStep }: {
-    phoneNumber: string;
-    formData: FormData;
-    setFormData: (data: FormData) => void;
-    nextStep: () => void;
-    prevStep: () => void;
-  }) => {
-    // When verification is completed successfully
-    const handleVerificationComplete = () => {
-      // Store success in formData if needed
-      setFormData({ 
-        ...formData, 
-        isPhoneVerified: true,
-        verifiedMobile: phoneNumber // Store the verified mobile number
-      });
-      
-      // Move to next step
-      nextStep();
-    };
+  useLayoutEffect(() => {
+    if (formData.isPhoneVerified) return;
+    (setFormData as Dispatch<SetStateAction<FormData>>)((prev) => ({
+      ...prev,
+      isPhoneVerified: true,
+      verifiedMobile: prev.mobile || prev.verifiedMobile || '',
+    }));
+  }, [formData.isPhoneVerified, setFormData, formData.mobile]);
 
-    return (
-      <OTPVerification
-        phoneNumber={phoneNumber}
-        onVerificationComplete={handleVerificationComplete}
-        onBack={prevStep}
-      />
-    );
-  }, []);
-
-  // If the phone is verified, we should skip this screen
-  // But we need to do it in the next render cycle to avoid issues
-  if (formData.isPhoneVerified) {
-    return (
-      <div className="otp-loading">
-        <p>Redirecting...</p>
-      </div>
-    );
-  }
-  
-  // Check if we should show reCAPTCHA v2 screen before OTP verification
-  // Phone score should already be evaluated from screen 5
-  if (shouldShowRecaptchaV2('otp')) {
-    return (
-      <RecaptchaV2Screen
-        title="Additional security verification"
-        subtitle="Please complete the security check below to continue with phone verification"
-        onVerificationComplete={() => {
-          setRecaptchaV2Passed(true);
-          setShowRecaptchaV2(false);
-          markScreenPassed('otp');
-          // After v2 completion, the OTP screen will render normally
-        }}
-        onBack={prevStep}
-      />
-    );
-  }
-  
-  // Render OTP component when v2 is not required
   return (
-    <OTPWrapper 
-      phoneNumber={formData.mobile || ''} 
-      formData={formData}
-      setFormData={setFormData}
-      nextStep={nextStep}
-      prevStep={prevStep}
-    />
+    <div className="otp-loading" aria-busy="true">
+      <p>Continuing…</p>
+    </div>
   );
 };
 
-export default VerificationScreen; 
+export default VerificationScreen;

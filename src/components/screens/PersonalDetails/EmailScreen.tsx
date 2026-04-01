@@ -1,8 +1,6 @@
 import React, { useRef } from 'react';
 import { NavigationButtons } from '../../ui';
 import IOSKeyboardManager, { useIosFocus } from '../../keyboard/IOSKeyboardManager';
-import { useRecaptcha } from '../../RecaptchaProvider';
-import RecaptchaV2Screen from '../RecaptchaV2Screen';
 import { FormData, EmailValidation } from '../../../types/FormTypes';
 
 interface EmailScreenProps {
@@ -50,30 +48,6 @@ const EmailScreen: React.FC<EmailScreenProps> = ({
   // iOS focus handling
   useIosFocus(emailInputRef, currentScreen === 4 && (!formData.email || formData.email === ''), 'email');
   
-  // Access reCAPTCHA context
-  const { 
-    shouldShowRecaptchaV2, 
-    markScreenPassed, 
-    setRecaptchaV2Passed, 
-    setShowRecaptchaV2
-  } = useRecaptcha();
-
-  // Check if we should show reCAPTCHA v2 screen instead of email form
-  if (shouldShowRecaptchaV2('email')) {
-    return (
-      <RecaptchaV2Screen
-        title="Verify your email address"
-        subtitle="Please complete the security check below to continue with email verification"
-        onVerificationComplete={() => {
-          setRecaptchaV2Passed(true);
-          setShowRecaptchaV2(false);
-          markScreenPassed('email');
-        }}
-        onBack={prevStep}
-      />
-    );
-  }
-
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newEmail = e.target.value;
     // Only update if changed
