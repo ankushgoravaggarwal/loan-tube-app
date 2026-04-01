@@ -19,6 +19,9 @@ interface MobileScreenProps {
   };
 }
 
+/** UK mobile numbers in this flow are always 07 + 9 further digits (11 total). */
+const UK_MOBILE_PREFIX = '07';
+
 const MobileScreen: React.FC<MobileScreenProps> = ({
   currentScreen,
   formData,
@@ -34,20 +37,35 @@ const MobileScreen: React.FC<MobileScreenProps> = ({
   const mobileInputRef = useRef<HTMLInputElement>(null);
   
   // iOS focus handling
-  useIosFocus(mobileInputRef, currentScreen === 5 && (!formData.mobile || formData.mobile === ''), 'tel');
+  const mobile = formData.mobile || '';
+  const digitsOnly = mobile.replace(/\D/g, '');
+  const suffix = (() => {
+    if (digitsOnly.startsWith(UK_MOBILE_PREFIX)) {
+      return digitsOnly.slice(UK_MOBILE_PREFIX.length).slice(0, 9);
+    }
+    if (digitsOnly.length === 10 && digitsOnly.startsWith('7')) {
+      return digitsOnly.slice(1).slice(0, 9);
+    }
+    return digitsOnly.slice(0, 9);
+  })();
 
-  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Allow only numbers
-    const value = e.target.value.replace(/[^\d]/g, '');
-    
-    // Skip update if unchanged
-    if (value === formData.mobile) return;
-    
-    // Single state update with conditional - check if this is a verified number
-    setFormData({ 
-      ...formData, 
-      mobile: value,
-      isPhoneVerified: value === formData.verifiedMobile 
+  useIosFocus(mobileInputRef, currentScreen === 5 && suffix.length === 0, 'tel');
+
+  const handleSuffixChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let digits = e.target.value.replace(/\D/g, '');
+    if (digits.startsWith(UK_MOBILE_PREFIX)) {
+      digits = digits.slice(UK_MOBILE_PREFIX.length).slice(0, 9);
+    } else if (digits.length >= 10 && digits.startsWith('7') && digits[1] !== '0') {
+      digits = digits.slice(1).slice(0, 9);
+    } else {
+      digits = digits.slice(0, 9);
+    }
+    const full = digits.length === 0 ? '' : `${UK_MOBILE_PREFIX}${digits}`;
+    if (full === mobile) return;
+    setFormData({
+      ...formData,
+      mobile: full,
+      isPhoneVerified: full === formData.verifiedMobile,
     });
   };
 
@@ -57,20 +75,20 @@ const MobileScreen: React.FC<MobileScreenProps> = ({
   };
 
   const hasInteracted = formData.mobile !== undefined;
-  const mobile = formData.mobile || '';
   const isValid = isValidMobile(mobile);
   const isVerified = formData.isPhoneVerified;
+
+  const showError =
+    hasInteracted &&
+    suffix.length > 0 &&
+    suffix.length < 9;
   
-  // Show error after 3 characters if first two digits are not 07
-  const showError = hasInteracted && mobile.length >= 3 && !mobile.startsWith('07');
-  
-  // Determine specific error message
   const getErrorMessage = () => {
-    if (!mobile.startsWith('07')) {
-      return 'Please provide a valid mobile number starting with 07';
+    if (suffix.length > 0 && suffix.length < 9) {
+      return `Enter all 9 digits after ${UK_MOBILE_PREFIX} (${suffix.length} of 9)`;
     }
     if (mobile.length !== 11) {
-      return 'Mobile number must be exactly 11 digits';
+      return 'Mobile number must be 11 digits (07 plus 9 digits)';
     }
     return 'Please enter a valid mobile number';
   };
@@ -100,7 +118,8 @@ const MobileScreen: React.FC<MobileScreenProps> = ({
         What is your mobile number?
       </h2>
       <p className="form-subtitle">
-        We'll only use this number to update you about your application.
+        We&apos;ll only use this number to update you about your application. UK mobile numbers
+        start with 07 — that prefix is fixed; enter the other 9 digits.
       </p>
       
       <div className="input-container">
@@ -110,24 +129,31 @@ const MobileScreen: React.FC<MobileScreenProps> = ({
         <div className="relative">
           <IOSKeyboardManager
             inputRef={mobileInputRef}
-            shouldFocus={!mobile || mobile === ''}
+            shouldFocus={suffix.length === 0}
             inputType="tel"
           >
-            <input
-              ref={mobileInputRef}
-              type="tel"
-              inputMode="numeric"
-              value={mobile}
-              onChange={handleMobileChange}
-              placeholder="07*********"
-              maxLength={11}
-              className={`input-field mobile-input ${showError ? 'error' : ''} ${isVerified ? 'verified' : ''}`}
-              style={showError ? inputErrorStyle : {}}
-              onFocus={(e) => showError && Object.assign(e.target.style, inputFocusStyle)}
-              onBlur={(e) => Object.assign(e.target.style, showError ? inputErrorStyle : {})}
-              autoFocus={!mobile || mobile === ''}
-              key={`mobile-input-${currentScreen}`}
-            />
+            <div className={`mobile-input-row ${showError ? 'mobile-input-row--error' : ''} ${isVerified ? 'mobile-input-row--verified' : ''}`}>
+              <span className="mobile-input-prefix-chip" aria-hidden="true">
+                {UK_MOBILE_PREFIX}
+              </span>
+              <input
+                ref={mobileInputRef}
+                type="tel"
+                inputMode="numeric"
+                value={suffix}
+                onChange={handleSuffixChange}
+                placeholder="123 456 789"
+                maxLength={9}
+                autoComplete="tel-national"
+                className={`input-field mobile-input mobile-input-suffix ${showError ? 'error' : ''} ${isVerified ? 'verified' : ''}`}
+                style={showError ? inputErrorStyle : {}}
+                onFocus={(e) => showError && Object.assign(e.target.style, inputFocusStyle)}
+                onBlur={(e) => Object.assign(e.target.style, showError ? inputErrorStyle : {})}
+                autoFocus={suffix.length === 0}
+                key={`mobile-input-${currentScreen}`}
+                aria-label="UK mobile number: 9 digits after 07"
+              />
+            </div>
           </IOSKeyboardManager>
           {isVerified && (
             <div className="verified-indicator">

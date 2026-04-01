@@ -824,16 +824,104 @@ input[placeholder="Type your email address"] {
   font-size: 18px;
 }
 
-/* Mobile Number Input */
-input[placeholder="07*********"] {
-  padding-left: 16px;
-  letter-spacing: 0.5px;
-}
-
+/* Mobile Number Input — same UK 07 + suffix pattern on all breakpoints (one MobileScreen) */
 .mobile-input {
   border-color: #000000;
   font-size: 18px;
   font-family: Montserrat;
+}
+
+/* UK mobile: fixed 07 prefix + editable suffix (9 digits) — mobile & desktop */
+.mobile-input-row {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #000000;
+  background: #fff;
+  min-height: 48px; /* comfortable touch target on phones */
+}
+
+.mobile-input-row--error {
+  border-color: #ff2048;
+}
+
+.mobile-input-row--verified {
+  border-color: #32a852;
+}
+
+.mobile-input-prefix-chip {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 11px 14px;
+  background: #f0f0f0;
+  border-right: 2px solid #000000;
+  font-size: clamp(17px, 2.8vw, 20px);
+  font-weight: 600;
+  font-family: Montserrat, sans-serif;
+  color: #1e2b3c;
+  user-select: none;
+  pointer-events: none;
+  line-height: 1.2;
+}
+
+.mobile-input-row--error .mobile-input-prefix-chip {
+  border-right-color: #ff2048;
+}
+
+.mobile-input-row--verified .mobile-input-prefix-chip {
+  border-right-color: #32a852;
+}
+
+.mobile-input-suffix {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+  border: none !important;
+  border-radius: 0 !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  letter-spacing: 0.5px;
+  font-size: clamp(17px, 2.8vw, 20px) !important; /* ≥16px on small screens to reduce iOS zoom */
+}
+
+.mobile-input-row--verified .mobile-input-suffix {
+  padding-right: 48px !important;
+}
+
+.mobile-input-suffix:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Narrow screens: tighter chip, full-width row inside form container */
+@media screen and (max-width: 640px) {
+  .mobile-input-row {
+    min-height: 50px;
+  }
+
+  .mobile-input-prefix-chip {
+    padding: 10px 10px;
+  }
+
+  .mobile-input-suffix {
+    padding-left: 12px !important;
+  }
+}
+
+/* Desktop / tablet: align with standard .input-field proportions in main column */
+@media screen and (min-width: 641px) {
+  .mobile-input-row {
+    min-height: auto;
+  }
+
+  .mobile-input-prefix-chip {
+    padding: 11px 16px;
+  }
 }
 
 
