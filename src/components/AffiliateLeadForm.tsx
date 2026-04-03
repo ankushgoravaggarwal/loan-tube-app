@@ -30,6 +30,7 @@ import {
   getStep3FieldErrors,
   getStep4FieldErrors,
   getStep5ConsentError,
+  UK_POSTCODE_MAX_LENGTH,
 } from '../affiliate-lead/validation';
 import { submitAffiliateLead } from '../services/affiliateLeadApi';
 import { LOAN_PURPOSE_UI } from '../affiliate-lead/loanPurposeUi';
@@ -841,13 +842,16 @@ const AffiliateLeadForm: React.FC = () => {
               <input
                 type="text"
                 autoComplete="postal-code"
+                maxLength={UK_POSTCODE_MAX_LENGTH}
                 className={`input-field ${showFieldError(3, 'postCode', step3Err.postCode) ? 'error' : ''}`}
                 value={form.postCode}
                 onChange={(e) => {
                   markDirty(3, 'postCode');
-                  update({
-                    postCode: e.target.value.toUpperCase().replace(/[^A-Z0-9\s]/g, ''),
-                  });
+                  const v = e.target.value
+                    .toUpperCase()
+                    .replace(/[^A-Z0-9\s]/g, '')
+                    .slice(0, UK_POSTCODE_MAX_LENGTH);
+                  update({ postCode: v });
                 }}
                 style={
                   showFieldError(3, 'postCode', step3Err.postCode)

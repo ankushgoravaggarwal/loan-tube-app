@@ -69,6 +69,19 @@ const NAME_RE = /^[a-zA-Z]+(?:[ '-][a-zA-Z]+)*$/;
 
 const EMAIL_RE = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+/** UK postcode (trimmed display value; case-insensitive via pattern). */
+const UK_POSTCODE_RE =
+  /^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))\s?[0-9][A-Za-z]{2})$/;
+
+export const UK_POSTCODE_MAX_LENGTH = 12;
+
+export function isValidAffiliateUkPostcode(raw: string): boolean {
+  const pc = raw.trim();
+  if (!pc) return false;
+  if (pc.length > UK_POSTCODE_MAX_LENGTH) return false;
+  return UK_POSTCODE_RE.test(pc);
+}
+
 /** Digits only, max 6, no leading zeros (empty if all zeros). */
 export function normalizeLoanAmountDigits(raw: string): string {
   const d = raw.replace(/\D/g, '').slice(0, 6);
@@ -157,8 +170,7 @@ export function validateStep2(s: AffiliateLeadFormState): boolean {
 }
 
 export function validateStep3(s: AffiliateLeadFormState): boolean {
-  const pc = s.postCode.replace(/\s/g, '').toUpperCase();
-  if (pc.length < 5 || pc.length > 10) return false;
+  if (!isValidAffiliateUkPostcode(s.postCode)) return false;
   if (!s.houseNumber.trim()) return false;
   if (!s.street.trim() || !s.city.trim()) return false;
   const months = parseInt(s.monthsAtAddress, 10);
@@ -330,8 +342,12 @@ export type Step3FieldErrors = Partial<
 
 export function getStep3FieldErrors(s: AffiliateLeadFormState): Step3FieldErrors {
   const out: Step3FieldErrors = {};
-  const pc = s.postCode.replace(/\s/g, '').toUpperCase();
-  if (pc.length < 5 || pc.length > 10) {
+  const pc = s.postCode.trim();
+  if (!pc) {
+    out.postCode = 'Enter your UK postcode.';
+  } else if (pc.length > UK_POSTCODE_MAX_LENGTH) {
+    out.postCode = `Postcode must be at most ${UK_POSTCODE_MAX_LENGTH} characters.`;
+  } else if (!UK_POSTCODE_RE.test(pc)) {
     out.postCode = 'Enter a valid UK postcode.';
   }
   if (!s.houseNumber.trim()) {
