@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import Sidebar from './Sidebar';
-import MultiStepForm from './MultiStepForm';
+import AffiliateLeadForm from './AffiliateLeadForm';
 import Footer from './Footer';
 import '../styles/LoanForm.css';
 import { usePartner } from '../partner/PartnerContext';
@@ -131,7 +131,7 @@ const LoanForm = () => {
           </div>
         </div>
 
-        <MultiStepForm />
+        <AffiliateLeadForm />
       </div>
     </div>
     {/* Footer Section */}
