@@ -31,6 +31,12 @@ const infoContent = {
     title: 'Fees',
     content: 'Fees are charges that the lender may apply to your loan. The amount shown is specific to this offer.',
     tooltip: 'Charges that the lender may apply to this loan offer.'
+  },
+  'fees-drafty': {
+    title: 'Fees (added to your loan amount)',
+    content:
+      'For this lender, fees are added to your loan amount (capitalised), so they form part of what you borrow and repay. The amount shown is specific to this offer.',
+    tooltip: 'These fees are added to your loan amount and repaid with the loan.'
   }
 };
 

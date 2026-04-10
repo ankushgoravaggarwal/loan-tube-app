@@ -500,12 +500,21 @@ const OfferPage: React.FC = () => {
   //   return new Intl.NumberFormat('en-GB').format(num);
   // };
 
+  /** Drafty offers: API `CompanyCode` matches lender logo key (`DraftyLoans`). */
+  const isDraftyOffer = (offer: Offer): boolean =>
+    (offer.CompanyCode ?? '').trim().toLowerCase() === 'draftyloans';
+
   // Render API Offer
   const renderAPIOffer = (offer: Offer) => {
     const offerId = offer.OfferID.toString();
     const isExpanded = expandedOffers[offerId] || false;
     const logoPath = getLenderLogoPath(offer.CompanyCode, offer.CompanyLogoUrl);
     const showLogo = logoPath.length > 0;
+    const drafty = isDraftyOffer(offer);
+    const feesInfoKey = drafty ? 'fees-drafty' : 'fees';
+    const feesLabel = drafty
+      ? 'Fees (added to your loan amount)'
+      : 'Fees';
 
     return (
       <div key={offerId} className="loan-offer-card">
@@ -594,9 +603,9 @@ const OfferPage: React.FC = () => {
                   </span>
                 </div>
                 <div className="loan-detail-item">
-                  <span className="loan-detail-label">Fees</span>
+                  <span className="loan-detail-label">{feesLabel}</span>
                   <span className="loan-detail-value">
-                    <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('fees')} aria-label={getInfoTooltip('fees')}>
+                    <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip(feesInfoKey)} aria-label={getInfoTooltip(feesInfoKey)}>
                       <Info size={16} className="detail-info-icon" aria-hidden />
                     </span>
                     {offer.Fee > 0 ? formatCurrency(offer.Fee) : 'No fees'}
@@ -622,10 +631,15 @@ const OfferPage: React.FC = () => {
           <div className="loan-mobile-representative">
             <h5>Representative Example</h5>
             <p>
-              If you borrow {formatCurrency(offer.LoanAmount)} over {offer.LoanDuration} months, 
-              your representative APR will be {offer.APR.toFixed(2)}%. 
-              Your monthly repayments will be {formatCurrency(offer.EMIAmount)} and 
-              the total amount repayable will be {formatCurrency(offer.TotalPayableAmount)}.
+              If you borrow {formatCurrency(offer.LoanAmount)} over {offer.LoanDuration} months,{' '}
+              your representative APR will be {offer.APR.toFixed(2)}%.{' '}
+              Your monthly repayments will be {formatCurrency(offer.EMIAmount)} and{' '}
+              the total amount repayable will be {formatCurrency(offer.TotalPayableAmount)}
+              {drafty && offer.Fee > 0 ? (
+                <>, which includes a {formatCurrency(offer.Fee)} lender fee.</>
+              ) : (
+                <>.</>
+              )}
             </p>
           </div>
 
@@ -732,9 +746,9 @@ const OfferPage: React.FC = () => {
                 </span>
               </div>
               <div className="loan-detail-item">
-                <span className="loan-detail-label">Fees</span>
+                <span className="loan-detail-label">{feesLabel}</span>
                 <span className="loan-detail-value">
-                  <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip('fees')} aria-label={getInfoTooltip('fees')}>
+                  <span className="detail-info-icon-wrap" data-tooltip={getInfoTooltip(feesInfoKey)} aria-label={getInfoTooltip(feesInfoKey)}>
                     <Info size={16} className="detail-info-icon" aria-hidden />
                   </span>
                   {offer.Fee > 0 ? formatCurrency(offer.Fee) : 'No fees'}
@@ -748,10 +762,15 @@ const OfferPage: React.FC = () => {
           <div className="loan-representative-example desktop-full-width">
             <h5>Representative Example</h5>
             <p>
-              If you borrow {formatCurrency(offer.LoanAmount)} over {offer.LoanDuration} months, 
-              your representative APR will be {offer.APR.toFixed(2)}%. 
-              Your monthly repayments will be {formatCurrency(offer.EMIAmount)} and 
-              the total amount repayable will be {formatCurrency(offer.TotalPayableAmount)}.
+              If you borrow {formatCurrency(offer.LoanAmount)} over {offer.LoanDuration} months,{' '}
+              your representative APR will be {offer.APR.toFixed(2)}%.{' '}
+              Your monthly repayments will be {formatCurrency(offer.EMIAmount)} and{' '}
+              the total amount repayable will be {formatCurrency(offer.TotalPayableAmount)}
+              {drafty && offer.Fee > 0 ? (
+                <>, which includes a {formatCurrency(offer.Fee)} lender fee.</>
+              ) : (
+                <>.</>
+              )}
             </p>
           </div>
         </div>
