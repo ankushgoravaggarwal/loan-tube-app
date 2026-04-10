@@ -500,9 +500,17 @@ const OfferPage: React.FC = () => {
   //   return new Intl.NumberFormat('en-GB').format(num);
   // };
 
-  /** Drafty offers: API `CompanyCode` matches lender logo key (`DraftyLoans`). */
-  const isDraftyOffer = (offer: Offer): boolean =>
-    (offer.CompanyCode ?? '').trim().toLowerCase() === 'draftyloans';
+  /**
+   * UK Credit: fees capitalised into loan amount — only when API `CompanyCode` is UKCredit.
+   */
+  const UK_CREDIT_LENDER_CODE = 'UKCredit';
+
+  const normalizeLenderCode = (code: string): string =>
+    code.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+
+  const isUkCreditCapitalisedFeesOffer = (offer: Offer): boolean =>
+    normalizeLenderCode(offer.CompanyCode ?? '') ===
+    normalizeLenderCode(UK_CREDIT_LENDER_CODE);
 
   // Render API Offer
   const renderAPIOffer = (offer: Offer) => {
@@ -510,9 +518,9 @@ const OfferPage: React.FC = () => {
     const isExpanded = expandedOffers[offerId] || false;
     const logoPath = getLenderLogoPath(offer.CompanyCode, offer.CompanyLogoUrl);
     const showLogo = logoPath.length > 0;
-    const drafty = isDraftyOffer(offer);
-    const feesInfoKey = drafty ? 'fees-drafty' : 'fees';
-    const feesLabel = drafty
+    const ukCreditFees = isUkCreditCapitalisedFeesOffer(offer);
+    const feesInfoKey = ukCreditFees ? 'fees-uk-credit' : 'fees';
+    const feesLabel = ukCreditFees
       ? 'Fees (added to your loan amount)'
       : 'Fees';
 
@@ -635,7 +643,7 @@ const OfferPage: React.FC = () => {
               your representative APR will be {offer.APR.toFixed(2)}%.{' '}
               Your monthly repayments will be {formatCurrency(offer.EMIAmount)} and{' '}
               the total amount repayable will be {formatCurrency(offer.TotalPayableAmount)}
-              {drafty && offer.Fee > 0 ? (
+              {ukCreditFees && offer.Fee > 0 ? (
                 <>, which includes a {formatCurrency(offer.Fee)} lender fee.</>
               ) : (
                 <>.</>
@@ -766,7 +774,7 @@ const OfferPage: React.FC = () => {
               your representative APR will be {offer.APR.toFixed(2)}%.{' '}
               Your monthly repayments will be {formatCurrency(offer.EMIAmount)} and{' '}
               the total amount repayable will be {formatCurrency(offer.TotalPayableAmount)}
-              {drafty && offer.Fee > 0 ? (
+              {ukCreditFees && offer.Fee > 0 ? (
                 <>, which includes a {formatCurrency(offer.Fee)} lender fee.</>
               ) : (
                 <>.</>
