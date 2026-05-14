@@ -3,6 +3,51 @@ import * as Sentry from '@sentry/react';
 
 // Backend base URL - used for leads and offer (application result) fetching. Production: sample.loantube.com
 const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'https://sample.loantube.com';
+
+/** Public marketing site when application-result returns INVALID_TAG (override with VITE_MAIN_SITE_URL). */
+const DEFAULT_MAIN_SITE_URL = 'https://www.loantube.com/';
+
+function getMainSiteRedirectUrl(): string {
+  const raw = import.meta.env.VITE_MAIN_SITE_URL?.trim();
+  if (raw) {
+    try {
+      const u = new URL(raw.includes('://') ? raw : `https://${raw}`);
+      return u.pathname === '/' || u.pathname === '' ? `${u.origin}/` : u.href;
+    } catch {
+      // ignore invalid env
+    }
+  }
+  return DEFAULT_MAIN_SITE_URL;
+}
+
+function isInvalidTagApplicationResultPayload(data: unknown): boolean {
+  if (data == null || typeof data !== 'object') return false;
+  const issue = (data as { applicationResultIssue?: unknown }).applicationResultIssue;
+  return issue === 'INVALID_TAG';
+}
+
+function redirectToMainSiteForInvalidTag(): void {
+  if (typeof window === 'undefined') return;
+  window.location.replace(getMainSiteRedirectUrl());
+}
+
+/**
+ * Application-result can return HTTP 200 with status "success" but applicationResultIssue INVALID_TAG.
+ * Redirect to main site and throw so callers skip success UI / retries.
+ */
+export class ApplicationResultInvalidTagError extends Error {
+  override readonly name = 'ApplicationResultInvalidTagError';
+  constructor() {
+    super('Application result: invalid or expired tag (redirecting to main site)');
+    Object.setPrototypeOf(this, new.target.prototype);
+  }
+}
+
+function throwIfInvalidTagApplicationResult(data: unknown): void {
+  if (!isInvalidTagApplicationResultPayload(data)) return;
+  redirectToMainSiteForInvalidTag();
+  throw new ApplicationResultInvalidTagError();
+}
 //const BACKEND_BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL || 'http://18.170.21.73:8081';
 // Environment variables configuration
 const API_CONFIG = {
@@ -399,6 +444,8 @@ export interface ApplicationResultResponse {
   message: string;
   tag: string;
   timestamp: string;
+  /** Present on some responses, e.g. INVALID_TAG while HTTP status remains success */
+  applicationResultIssue?: string;
   MatchedLenderList: MatchedLenderGroup[];
   ProductLine: string;
   LoanAmount: number;
@@ -520,9 +567,13 @@ export class ApplicationResultAPI {
       }
 
       const result = await response.json();
+      throwIfInvalidTagApplicationResult(result);
       console.log('✅ Application result received:', result);
       return result as ApplicationResultResponse;
     } catch (err) {
+      if (err instanceof ApplicationResultInvalidTagError) {
+        throw err;
+      }
       const apiHost = typeof window !== 'undefined' && apiUrl ? new URL(apiUrl).host : 'unknown';
       const errorMessage = err instanceof Error ? err.message : String(err);
       const errorName = err instanceof Error ? err.name : 'Error';
@@ -596,6 +647,7 @@ export class ApplicationResultAPI {
 
     // Payload is already the full application result
     const applicationResult = payload as unknown as ApplicationResultResponse;
+    throwIfInvalidTagApplicationResult(applicationResult);
     console.log('✅ Loan details updated successfully:', applicationResult);
     return { applicationResult };
   }

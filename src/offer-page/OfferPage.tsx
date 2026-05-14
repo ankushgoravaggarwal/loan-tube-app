@@ -4,7 +4,13 @@ import { Check, Info, Star, ChevronDown, X } from 'lucide-react';
 import OfferPageSidebar from './OfferPageSidebar';
 import OfferPageFooter from './OfferPageFooter';
 import { ModifySearchModal, ContinueModal, getInfoTooltip } from './OfferpageModals';
-import { ApplicationResultAPI, type Offer, type MatchedLenderGroup, type ApplicationResultResponse } from '../services/apiService';
+import {
+  ApplicationResultAPI,
+  ApplicationResultInvalidTagError,
+  type Offer,
+  type MatchedLenderGroup,
+  type ApplicationResultResponse,
+} from '../services/apiService';
 import type { LenderResultLoanDetails } from './LenderResult';
 import * as Sentry from '@sentry/react';
 
@@ -164,6 +170,10 @@ const OfferPage: React.FC = () => {
         setLoading(false);
         return;
       } catch (err) {
+        if (err instanceof ApplicationResultInvalidTagError) {
+          setLoading(false);
+          return;
+        }
         lastError = err instanceof Error ? err : new Error(String(err));
         console.warn(`❌ Attempt ${attempt}/${MAX_OFFER_FETCH_ATTEMPTS} failed:`, lastError.message);
         if (attempt < MAX_OFFER_FETCH_ATTEMPTS) {
@@ -202,6 +212,9 @@ const OfferPage: React.FC = () => {
       // Reset expanded offers since we have new data
       setExpandedOffers({});
     } catch (err) {
+      if (err instanceof ApplicationResultInvalidTagError) {
+        return;
+      }
       console.error('❌ Error updating loan details:', err);
       Sentry.captureException(err);
       throw err; // Re-throw to let the modal handle the error display
