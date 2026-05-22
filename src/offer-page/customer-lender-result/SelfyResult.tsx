@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Phone, ExternalLink } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
 import OfferPageHeader from '../OfferPageHeader';
 import OfferPageFooter from '../OfferPageFooter';
 import { LoanDetailsList } from './LoanDetailsList';
 import { BackLink } from './BackLink';
+import OfflineLenderContactBlock from './OfflineLenderContactBlock';
 import type { LenderResultView } from './types';
 import '../../styles/OfferPage.css';
 import '../../styles/CustomerLenderResult.css';
@@ -24,7 +25,7 @@ const SelfyResult: React.FC<SelfyResultProps> = ({ view, onGoBack, showConnect =
     onContinueToConnect?.();
   };
 
-  if (showConnectScreen && view.evloConnectUrl) {
+  if (showConnectScreen && view.isEvloConnect && view.evloConnectUrl) {
     return (
       <div className="offer-page-container customer-lender-result-wrap">
         <OfferPageHeader />
@@ -101,27 +102,8 @@ const SelfyResult: React.FC<SelfyResultProps> = ({ view, onGoBack, showConnect =
           )}
           <p className="customer-lender-result-section-label">Here are your loan details:</p>
           <LoanDetailsList view={view} variant="selfy" />
-          {!view.isEvloConnect || !view.evloConnectUrl ? (
-            <div className="customer-lender-result-branch-block">
-              <p className="customer-lender-result-cta-copy">
-                <strong>
-                  Please call {view.lenderName} at the number below to complete the rest of your application with them.
-                </strong>
-              </p>
-              {view.branchPhone && (
-                <div className="customer-lender-result-submit-wrap">
-                  <a href={`tel:${view.branchPhone.replace(/\s/g, '')}`} className="customer-lender-result-cta-btn">
-                    <Phone size={20} aria-hidden />
-                    <strong>Call {view.branchPhone}</strong>
-                  </a>
-                  <label className="customer-lender-result-cta-hint">(click the button to call)</label>
-                </div>
-              )}
-              <p className="customer-lender-result-note-text">
-                <strong>Note:</strong> You will only receive the loan amount once you have completed the rest of the
-                application process with {view.lenderName}.
-              </p>
-            </div>
+          {!view.isEvloConnect ? (
+            <OfflineLenderContactBlock view={view} variant="selfy" />
           ) : (
             <div className="customer-lender-result-branch-block">
               <p className="customer-lender-result-cta-copy">Continue to complete rest of the application process.</p>

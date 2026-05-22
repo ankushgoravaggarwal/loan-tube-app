@@ -113,8 +113,12 @@ export function buildLenderResultView(data: DecodedLenderData): LenderResultView
   const branchPhone = branchPhoneRaw.replace(/\s/g, '').length > 0 ? branchPhoneRaw : '';
   const branchName = (data.branchName ?? '').toString().trim() || null;
   const lenderName = (data.lenderName ?? data.lenderCompanyName ?? '').toString().trim() || 'Your lender';
-  const isEvloConnect = Boolean(data.isEvloConnectRequired ?? data.IsEvloConnectRequired ?? data.evloConnectUrl);
   const evloConnectUrl = (data.evloConnectUrl ?? '').toString().trim() || null;
+  const connectRequested = Boolean(
+    data.isEvloConnectRequired ?? data.IsEvloConnectRequired ?? evloConnectUrl
+  );
+  /** Open Banking flow only when backend requests it and a non-empty connect URL is present */
+  const isEvloConnect = connectRequested && Boolean(evloConnectUrl);
   const hasAnyLoanFigures = loanAmountNum != null || loanDurationNum != null || emiAmountNum != null || aprNum != null || totalNum != null;
 
   console.log('[CustomerLenderResult] buildLenderResultView: hasAnyLoanFigures', hasAnyLoanFigures, 'view summary', {
